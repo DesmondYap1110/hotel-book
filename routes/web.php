@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\RoomController;
+use App\Http\Controllers\Admin\RoomTypeController;
+use App\Http\Controllers\Admin\RoomFacilityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +24,19 @@ Route::get('/', function () {
 //     return view('admin.rooms_list');
 // });
 
-// Route::get('/admin/rooms', function () {
-//     return view('admin.rooms_list');
-// });
+// Route::get('/admin/rooms', [RoomController::class, 'index']);
+
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::resource('rooms', RoomController::class)->only(['index','create','store','edit', 'update','destroy']);
+});
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::resource('room_types', RoomTypeController::class)->only(['index','create','store','edit', 'update','destroy']);
+});
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::resource('room_facilities', RoomFacilityController::class)->only(['index','create','store','edit', 'update','destroy']);
+});
+
 

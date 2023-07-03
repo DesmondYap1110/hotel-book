@@ -22101,8 +22101,24 @@ var ExampleComponent = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)
 var WelcomeComponent = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
   return __webpack_require__.e(/*! import() | welcome-component */ "welcome-component").then(__webpack_require__.bind(__webpack_require__, /*! ./components/WelcomeComponent.vue */ "./resources/js/components/WelcomeComponent.vue"));
 });
-_main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('ExampleComponent', ExampleComponent);
-_main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('WelcomeComponent', WelcomeComponent);
+var RoomsLists = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
+  return __webpack_require__.e(/*! import() | room-lists */ "room-lists").then(__webpack_require__.bind(__webpack_require__, /*! ./components/Rooms/Lists.vue */ "./resources/js/components/Rooms/Lists.vue"));
+});
+var RoomAdd = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
+  return __webpack_require__.e(/*! import() | room-add */ "room-add").then(__webpack_require__.bind(__webpack_require__, /*! ./components/Rooms/Add.vue */ "./resources/js/components/Rooms/Add.vue"));
+});
+var RoomTypesLists = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
+  return __webpack_require__.e(/*! import() | room-add */ "room-add").then(__webpack_require__.bind(__webpack_require__, /*! ./components/Types/Lists.vue */ "./resources/js/components/Types/Lists.vue"));
+});
+var RoomTypesAdd = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
+  return __webpack_require__.e(/*! import() | room-add */ "room-add").then(__webpack_require__.bind(__webpack_require__, /*! ./components/Types/Add.vue */ "./resources/js/components/Types/Add.vue"));
+});
+_main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('example-component', ExampleComponent);
+_main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('welcome-component', WelcomeComponent);
+_main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('rooms-lists', RoomsLists);
+_main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-add', RoomAdd);
+_main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-types-lists', RoomTypesLists);
+_main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-types-add', RoomTypesAdd);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_main_app__WEBPACK_IMPORTED_MODULE_1__.app);
 
 /***/ }),
@@ -38511,7 +38527,7 @@ ${codeFrame}` : message);
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
+/******/ 			id: moduleId,
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
@@ -38601,7 +38617,7 @@ ${codeFrame}` : message);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if ({"example-component":1,"welcome-component":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			if ({"example-component":1,"welcome-component":1,"room-lists":1,"room-add":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};
@@ -38783,6 +38799,11 @@ ${codeFrame}` : message);
 /******/ 		var chunkLoadingGlobal = self["webpackChunk"] = self["webpackChunk"] || [];
 /******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
 /******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/nonce */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nc = undefined;
 /******/ 	})();
 /******/ 	
 /************************************************************************/

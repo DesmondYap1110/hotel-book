@@ -9,7 +9,27 @@ const WelcomeComponent = defineAsyncComponent(()=>
     import(/* webpackChunkName: "welcome-component" */ "./components/WelcomeComponent.vue")
 );
 
-app.component('ExampleComponent',ExampleComponent);
-app.component('WelcomeComponent',WelcomeComponent);
+const RoomsLists = defineAsyncComponent(()=>
+    import(/* webpackChunkName: "room-lists" */ "./components/Rooms/Lists.vue")
+);
 
+const RoomAdd = defineAsyncComponent(()=>
+    import(/* webpackChunkName: "room-add" */ "./components/Rooms/Add.vue")
+);
+
+const RoomTypesLists = defineAsyncComponent(()=>
+    import(/* webpackChunkName: "room-add" */ "./components/Types/Lists.vue")
+);
+
+const RoomTypesAdd = defineAsyncComponent(()=>
+    import(/* webpackChunkName: "room-add" */ "./components/Types/Add.vue")
+);
+
+
+app.component('example-component',ExampleComponent);
+app.component('welcome-component',WelcomeComponent);
+app.component('rooms-lists',RoomsLists);
+app.component('room-add',RoomAdd);
+app.component('room-types-lists',RoomTypesLists);
+app.component('room-types-add',RoomTypesAdd);
 export default app;

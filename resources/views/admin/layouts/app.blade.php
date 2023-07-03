@@ -11,7 +11,6 @@
 
 <body class="hold-transition sidebar-mini">
     <div class="wrapper" id="app">
-
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
 
             <ul class="navbar-nav">
@@ -177,7 +176,17 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" active-class="active"  class="nav-link">
+                            <a href="" active-class="active"  class="nav-link">
+                                <i class="nav-icon fas fa-home"></i>
+                                <p>
+                                    Overview
+                                </p>
+                            </a>
+                        </li>
+
+
+                        <li class="nav-item">
+                            <a href="/admin/rooms" active-class="active"  class="nav-link">
                                 <i class="nav-icon fas fa-hotel"></i>
                                 <p>
                                     Rooms
@@ -223,28 +232,19 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" active-class="active" class="nav-link">
+                            <a href="/admin/room_types" active-class="active" class="nav-link">
                                 <i class="nav-icon fas fa-bed"></i>
                                 <p>
-                                    Rooms Types
+                                    Room Types
                                 </p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" active-class="active" class="nav-link">
+                            <a href="/admin/room_facilities" active-class="active" class="nav-link">
                                 <i class="nav-icon 	fas fa-shower" aria-hidden="true"></i>
                                 <p>
                                     Room Facilities
-                                </p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="#" active-class="active" class="nav-link">
-                                <i class="nav-icon fas fa-suitcase" aria-hidden="true"></i>
-                                <p>
-                                    Room Services
                                 </p>
                             </a>
                         </li>
@@ -268,7 +268,7 @@
 
         </aside>
 
-        <div class="content-wrapper">
+        <div class="content-wrapper pl-3 pr-3">
             @yield('content')
         </div>
 
@@ -290,6 +290,8 @@
             <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
         </footer>
     </div>
+
+
     <script src="{{ mix('js/app.js') }}"></script>
 </body>
 
