@@ -179,7 +179,7 @@
                             <a href="" active-class="active"  class="nav-link">
                                 <i class="nav-icon fas fa-home"></i>
                                 <p>
-                                    Overview
+                                    Hotel
                                 </p>
                             </a>
                         </li>
@@ -213,14 +213,6 @@
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a href="#" active-class="active" class="nav-link">
-                                <i class="nav-icon fas fa-user-clock"></i>
-                                <p>
-                                    Guests
-                                </p>
-                            </a>
-                        </li>
 
                         <li class="nav-item">
                             <a href="#" active-class="active" class="nav-link">
@@ -245,6 +237,15 @@
                                 <i class="nav-icon 	fas fa-shower" aria-hidden="true"></i>
                                 <p>
                                     Room Facilities
+                                </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="/admin/room_facilities" active-class="active" class="nav-link">
+                                <i class="nav-icon fas fa-concierge-bell" aria-hidden="true"></i>
+                                <p>
+                                    Services
                                 </p>
                             </a>
                         </li>

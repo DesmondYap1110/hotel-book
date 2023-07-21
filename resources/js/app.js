@@ -5,5 +5,4 @@ import 'admin-lte/dist/js/adminlte.min.js';
 
 import{app} from './main-app';
 import "./vue-component";
-
 app.mount('#app');

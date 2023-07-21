@@ -1,98 +1,86 @@
 <script setup>
-
 import { ref, reactive } from 'vue';
-import Toggle from '@vueform/toggle'
-import Multiselect from '@vueform/multiselect'
+import { VueMultiImageUpload } from '@zakerxa/vue-multiple-image-upload';
+import Toggle from '@vueform/toggle';
+import store from '../../stores/beds';
+import { useErrors } from '../../errors';
+const { errors, get, record } = useErrors();
 
-// defineProps({
-//     options: Object,
-// });
+const beds = store.state.beds;
 
+let uploadedImages = [];
 
+// Create a reactive form object
 const form = reactive({
     name: '',
-    images: [],
-    message: '',
-    price: '',
-    selectedBeds: [],
+    quantity: '',
+    description: '',
     max_adult: '',
     max_child: '',
-    area: '',
-    status: '',
 });
 
 const max = ref(1000);
+const component = ref({});
+const options = ref({
+    max: "Max",
+    ready: "Ready",
+    select: "Choosed",
+});
+const imageSize = 2000000; // 2MB
+const formatType = ['image/jpeg', 'image/png', 'image/jpg'];
 
-const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    const maxLength = e.target.getAttribute('data-max_length');
+const images = (e) => {
+    uploadedImages = e;
 
-    files.forEach(file => {
-        if (!file.type.match('image.*')) {
-            return;
-        }
-
-        if (form.images.length >= maxLength) {
-            return false;
-        } else {
-            const reader = new FileReader();
-            reader.onload = () => {
-                form.images.push({ src: reader.result, name: file.name });
-            };
-            reader.readAsDataURL(file);
-        }
-    });
 };
 
-const removeFile = (index) => {
-    form.images.splice(index, 1);
+const components = {
+    VueMultiImageUpload,
 };
-
-
-const beds = ref([
-    {
-        id: 1,
-        name: 'Single',
-        isSelected: false,
-        quantity: '',
-    },
-    {
-        id: 2,
-        name: 'Queen',
-        isSelected: false,
-        quantity: '',
-    },
-    {
-        id: 3,
-        name: 'King',
-        isSelected: false,
-        quantity: '',
-    },
-
-]);
 
 const toggleBedSelection = (bed) => {
 
     const selected = bed.isSelected;
-    if (selected) {
-        form.selectedBeds.push(bed);
-    } else {
-        const index = form.selectedBeds.findIndex(b => b.id === bed.id);
-        if (index !== -1) {
-            form.selectedBeds.splice(index, 1);
-        }
-    }
+    // if (selected) {
+    //     form.selectedBeds.push(bed);
+    // } else {
+    //     const index = form.selectedBeds.findIndex(b => b.id === bed.id);
+    //     if (index !== -1) {
+    //         form.selectedBeds.splice(index, 1);
+
+    //     }
+    // }
 
 }
 
 const submitForm = () => {
-    axios.post('/admin/room_types', form)
-    .then((response) => {
-        toastr.success('Appointment created successfully!');
-    })
-    .catch((error) => {
-        // actions.setErrors(error.response.data.errors);
-    })
+
+    console.log(beds);
+
+    const formData = new FormData();
+
+    for (const key in form) {
+        formData.append(key, form[key]);
+    }
+
+    beds.forEach((bed, index) => {
+        for (const bedKey in bed) {
+            formData.append(`selectedBeds[${index}][${bedKey}]`, bed[bedKey]);
+        }
+    });
+
+    uploadedImages.forEach((image, index) => {
+        formData.append(`images[${index}]`, image);
+    });
+
+    axios.post('/api/types', formData)
+        .then((response) => {
+            location.reload();
+        })
+        .catch((error) => {
+            // errors.value.record(error.response.data.errors);
+            record(error.response.data.errors);
+        })
 };
 
 </script>
@@ -192,6 +180,7 @@ p {
     position: relative;
     padding-bottom: 100%;
 }
+
 #form-sub-title {
     font-size: 18px;
     font-weight: 600;
@@ -199,7 +188,6 @@ p {
     margin-bottom: 15px;
     color: #1896bd;
 }
-
 </style>
 
 <template>
@@ -207,135 +195,146 @@ p {
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">
-                        <span v-if="editMode">Edit</span>
-                        <span v-else>Create</span>
-                        Appointment
-                    </h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item">
-                            <router-link to="/admin/dashboard">Home</router-link>
+                            <a href="/admin/dashboard">Home</a>
                         </li>
                         <li class="breadcrumb-item">
-                            <router-link to="/admin/appointments">Room Types</router-link>
-                        </li>
-                        <li class="breadcrumb-item active">
-                            <span v-if="editMode">Edit</span>
-                            <span v-else>Create</span>
+                            <a href="/admin/appointments">RoomTypes</a>
                         </li>
                     </ol>
                 </div>
             </div>
         </div>
     </div>
-    <div>
-        <form @submit.prevent="">
-            <div class="row d-flex">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <p id="form-sub-title">
-                                General
-                            </p>
-                            <div class="card-text">
-                                <div class="form-group">
-                                    <label for="name">
-                                        Name:
-                                    </label>
-                                    <input type="name" v-model="form.name" class="form-control" placeholder="Enter name"
-                                        id="name" name="name">
-                                </div>
 
-                                <div class="card">
-                                    <div class="card-body text-center">
-                                        <div class="upload__box">
-                                            <div class="upload__btn-box">
-                                                <label class="upload__btn">
-                                                    <p>Upload images</p>
-                                                    <input type="file" multiple data-max_length="20"
-                                                        @change="handleFileChange" class="upload__inputfile">
-                                                </label>
-                                            </div>
-                                            <div class="upload__img-wrap">
-                                                <div v-for="(image, index) in form.images" :key="index"
-                                                    class="upload__img-box">
-                                                    <div :style="{ backgroundImage: 'url(' + image.src + ')' }"
-                                                        :data-number="index" :data-file="image.name" class="img-bg">
-                                                        <div class="upload__img-close" @click="removeFile(index)"></div>
+    <div class="content">
+        <div class="container-fluid">
+            <form @submit.prevent="">
+                <div class="row d-flex">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <p id="form-sub-title">
+                                    General
+                                </p>
+                                <div class="card-text">
+                                    <div class="form-group">
+                                        <label for="name">
+                                            Name:
+                                        </label>
+                                        <input type="name" v-model="form.name" class="form-control" placeholder="Enter name"
+                                            id="name" name="name">
+                                        <div>
+                                            <span class="help is-danger" v-text="get('name')"></span>
+                                        </div>
+
+                                    </div>
+
+                                    <vue-multi-image-upload @data-image="images" :max="10" :data-reset="component"
+                                        :options="options" :image-size="imageSize" :image-format="formatType" />
+
+                                    <button @click="component.clear = true">Clear</button>
+
+                                    <div class="form-group">
+                                        <label for="description">Description</label>
+                                        <textarea v-model="form.description" :maxlength="max" class="form-control"
+                                            id="description" rows="3" name="description"
+                                            placeholder="Enter description"></textarea>
+                                        <span class="message-counter">{{ form.description.length }}/{{ max }}</span>
+                                        <div>
+                                            <span class="help is-danger" v-text="get('description')"></span>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-6">
+
+                        <div class="card">
+                            <div class="card-body">
+                                <p id="form-sub-title">
+                                    Detail
+                                </p>
+                                <div class="card-text">
+
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <label for="bed">Beds:</label>
+                                            <div v-for="(item, index) in beds" :key="item.id">
+                                                <p>
+                                                    <Toggle :value="item.id" v-model="item.isSelected"
+                                                        @change="toggleBedSelection(item)" />
+                                                    <span class="pl-3">{{ item.name }}</span>
+                                                <div v-if="item.isSelected" class="mt-2 form-group">
+                                                    <input type="number" min="1" max="5" class="form-control"
+                                                        placeholder="Enter quantity of bed"
+                                                        :name="'selectedBeds.' + index + '.quantity'"
+                                                        v-model="item.quantity">
+                                                    <div>
+                                                        <span class="help is-danger"
+                                                            v-text="get('selectedBeds.' + index + '.quantity')"></span>
                                                     </div>
                                                 </div>
+
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
 
-
-
-                                <div class="form-group">
-                                    <label for="description">Description</label>
-                                    <textarea v-model="form.message" :maxlength="max" class="form-control" id="description"
-                                        rows="3" name="description" placeholder="Enter description"></textarea>
-                                    <span class="message-counter">{{ form.message.length }}/{{ max }}</span>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-md-6">
-
-                    <div class="card">
-                        <div class="card-body">
-                            <p id="form-sub-title">
-                                Detail
-                            </p>
-                            <div class="card-text">
-
-                                <div class="card">
-                                    <div class="card-body">
-                                        <label for="bed">Beds:</label>
-                                        <div v-for="(item, index) in beds" :key="item.id">
-                                            <p>
-                                                <Toggle :value="item.id" v-model="item.isSelected"
-                                                    @change="toggleBedSelection(item)" />
-                                                <span class="pl-3">{{ item.name }}</span>
-                                            <div v-if="item.isSelected" class="mt-2 form-group">
-                                                <input type="number" min="1" max="5" class="form-control"
-                                                    placeholder="Enter quantity of bed"
-                                                    :name="'items.' + index + '.quantity'" v-model="item.quantity">
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <label for="max_adult">Max Adult:</label>
+                                            <input type="number" class="form-control" placeholder="Enter max adult"
+                                                name="max_adult" v-model="form.max_adult">
+                                            <div>
+                                                <span class="help is-danger" v-text="get('max_adult')"></span>
                                             </div>
-
-                                            </p>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="max_children">Max Children:</label>
+                                            <input type="number" class="form-control" placeholder="Enter max children"
+                                                name="max_children" v-model="form.max_child">
+                                            <div>
+                                                <span class="help is-danger" v-text="get('max_children')"></span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-
-                                <div class="row">
-                                    <div class="form-group col-md-6">
-                                        <label for="max_adult">Max Adult:</label>
-                                        <input type="number" class="form-control" placeholder="Enter max adult"
-                                            name="max_adult" v-model="form.max_adult">
+                                    <div class="row">
+                                        <div class="form-group col-md-12">
+                                            <label for="quantity">Quantity:</label>
+                                            <input type="number" class="form-control" placeholder="Enter room quantity"
+                                                name="quantity" v-model="form.quantity">
+                                            <div>
+                                                <span class="help is-danger" v-text="get('quantity')"></span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="max_children">Max Children:</label>
-                                        <input type="number" class="form-control" placeholder="Enter max children"
-                                            name="max_children" v-model="form.max_child">
-                                    </div>
-                                </div>
 
+                                </div>
                             </div>
                         </div>
+
                     </div>
-                    <button @click="submitForm" class="btn btn-info"><i class="fas fa-save m-2"></i>Save Changes</button>
+
                 </div>
 
-            </div>
-        </form>
+                <div class="row">
+                    <div class="col-md-12  text-right">
+                        <button type="button" class="btn btn-primary">Cancel</button>
+                        <button type="button" @click="submitForm" class="btn btn-warning ml-2">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 

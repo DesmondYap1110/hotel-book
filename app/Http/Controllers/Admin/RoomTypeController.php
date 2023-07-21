@@ -15,16 +15,8 @@ class RoomTypeController extends Controller
     }
 
     public function create(){
-        $options = [
-            "decision" => Decision::get(),
-        ];
 
-        return view('admin.types.add' , [
-            'options' => $options,
-        ]);
+        return view('admin.types.add');
     }
 
-    public function store(Request $request){
-        dd($request->input('selectedBeds'));
-    }
 }

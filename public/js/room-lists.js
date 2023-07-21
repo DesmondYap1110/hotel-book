@@ -56,9 +56,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _DataTable_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../DataTable.vue */ "./resources/js/components/DataTable.vue");
-/* harmony import */ var _Pagination_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Pagination.vue */ "./resources/js/components/Pagination.vue");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _DataTable_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../DataTable.vue */ "./resources/js/components/DataTable.vue");
+/* harmony import */ var _Pagination_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Pagination.vue */ "./resources/js/components/Pagination.vue");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
 
 
 
@@ -67,7 +70,7 @@ __webpack_require__.r(__webpack_exports__);
   setup: function setup(__props, _ref) {
     var __expose = _ref.expose;
     __expose();
-    var columns = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)([{
+    var columns = (0,vue__WEBPACK_IMPORTED_MODULE_3__.ref)([{
       name: 'ID'
     }, {
       name: 'Room No'
@@ -80,19 +83,37 @@ __webpack_require__.r(__webpack_exports__);
     }, {
       name: 'Action'
     }]);
-    var rows = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)([{
-      id: 1,
-      room_no: 1001,
-      room_floor: 1,
-      room_type: 'Single',
-      is_available: true
-    }, {
-      id: 2,
-      room_no: 1002,
-      room_floor: 2,
-      room_type: 'Double',
-      is_available: true
-    }]);
+
+    // const rows = ref([
+    //     {
+    //         id: 1,
+    //         room_no: 1001,
+    //         room_floor: 1,
+    //         room_type: 'Single',
+    //         is_available: true,
+    //     },
+    //     {
+    //         id: 2,
+    //         room_no: 1002,
+    //         room_floor: 2,
+    //         room_type: 'Double',
+    //         is_available: true,
+    //     },
+    // ]);
+
+    var appointments = (0,vue__WEBPACK_IMPORTED_MODULE_3__.ref)([]);
+    var getAppointments = function getAppointments() {
+      alert('hi');
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/types', {
+        params: params
+      }).then(function (response) {
+        appointments.value = response.data;
+        console.log(appointments);
+      });
+    };
+    (0,vue__WEBPACK_IMPORTED_MODULE_3__.onMounted)(function () {
+      getAppointments();
+    });
     var editUser = function editUser(id) {
       alert(id);
     };
@@ -101,12 +122,17 @@ __webpack_require__.r(__webpack_exports__);
     };
     var __returned__ = {
       columns: columns,
-      rows: rows,
+      appointments: appointments,
+      getAppointments: getAppointments,
       editUser: editUser,
       confirmUserDeletion: confirmUserDeletion,
-      DataTable: _DataTable_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-      Pagination: _Pagination_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
-      ref: vue__WEBPACK_IMPORTED_MODULE_2__.ref
+      get axios() {
+        return (axios__WEBPACK_IMPORTED_MODULE_0___default());
+      },
+      DataTable: _DataTable_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+      Pagination: _Pagination_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+      ref: vue__WEBPACK_IMPORTED_MODULE_3__.ref,
+      onMounted: vue__WEBPACK_IMPORTED_MODULE_3__.onMounted
     };
     Object.defineProperty(__returned__, '__isScriptSetup', {
       enumerable: false,
@@ -241,7 +267,7 @@ var _hoisted_6 = {
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["DataTable"], {
     columns: $setup.columns,
-    rows: $setup.rows,
+    rows: _ctx.rows,
     onEditUser: $setup.editUser,
     onConfirmUserDeletion: $setup.confirmUserDeletion
   }, null, 8 /* PROPS */, ["columns", "rows"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Pagination"])])])])])]);

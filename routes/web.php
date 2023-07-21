@@ -28,14 +28,12 @@ Route::get('/', function () {
 
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::resource('rooms', HotelController::class)->only(['index','edit', 'update','destroy']);
+
     Route::resource('rooms', RoomController::class)->only(['index','create','store','edit', 'update','destroy']);
-});
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::resource('room_types', RoomTypeController::class)->only(['index','create','store','edit', 'update','destroy']);
-});
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::resource('room_facilities', RoomFacilityController::class)->only(['index','create','store','edit', 'update','destroy']);
 });
 

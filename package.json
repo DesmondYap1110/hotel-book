@@ -34,7 +34,8 @@
         "vue-loader": "^17.1.1",
         "vue-media-upload": "^2.1.2",
         "vue-multiselect": "^2.1.7",
-        "vue3-easy-data-table": "^1.5.42",
+        "vue-upload-multiple-image": "^1.1.6",
+        "vue3-easy-data-table": "^1.5.47",
         "vue3-tabs-component": "^1.3.2"
     }
 }

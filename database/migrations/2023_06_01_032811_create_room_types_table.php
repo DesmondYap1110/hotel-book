@@ -17,11 +17,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description');
-            $table->integer('max_adult');
-            $table->integer('max_child');
-            $table->integer('single_bed');
-            $table->integer('queen_bed');
-            $table->integer('king_bed');
+            $table->integer('max_adult')->nullable();
+            $table->integer('max_child')->nullable();
+            $table->integer('quantity');
+            $table->integer('single_bed')->nullable();
+            $table->integer('queen_bed')->nullable();
+            $table->integer('king_bed')->nullable();
             $table->timestamps();
         });
     }

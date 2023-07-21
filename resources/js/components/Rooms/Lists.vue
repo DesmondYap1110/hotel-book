@@ -17,9 +17,10 @@
 </template>
 
 <script setup>
+import axios from 'axios';
 import DataTable from '../DataTable.vue';
 import Pagination from '../Pagination.vue';
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
 
 const columns = ref([
     {
@@ -42,23 +43,41 @@ const columns = ref([
     },
 ]);
 
-const rows = ref([
-    {
-        id: 1,
-        room_no: 1001,
-        room_floor: 1,
-        room_type: 'Single',
-        is_available: true,
-    },
-    {
-        id: 2,
-        room_no: 1002,
-        room_floor: 2,
-        room_type: 'Double',
-        is_available: true,
-    },
-]);
 
+// const rows = ref([
+//     {
+//         id: 1,
+//         room_no: 1001,
+//         room_floor: 1,
+//         room_type: 'Single',
+//         is_available: true,
+//     },
+//     {
+//         id: 2,
+//         room_no: 1002,
+//         room_floor: 2,
+//         room_type: 'Double',
+//         is_available: true,
+//     },
+// ]);
+
+const appointments = ref([]);
+
+const getAppointments = () => {
+
+    alert('hi');
+    axios.get('/api/types', {
+        params: params,
+    })
+        .then((response) => {
+            appointments.value = response.data;
+            console.log(appointments);
+        })
+};
+
+onMounted(() => {
+    getAppointments();
+})
 
 const editUser = (id) => {
     alert(id);

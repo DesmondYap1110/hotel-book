@@ -24,12 +24,22 @@ class RoomTypesRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'=> ['required'],
-            'description'=> ['required'],
-            'max_adult'=> ['required'],
-            'max_child' => ['required'],
-            'area'=> ['required'],
-            'status'=> ['required'],
+            'name'=> ['required','unique:room_types,name'],
+            'images'=> ['required'],
+            'description'=> ['required','max:1000'],
+            'max_adult'=> ['nullable','integer'],
+            'max_child' => ['nullable','integer'],
+            'selectedBeds'=>['required'],
+            'quantity'=>['required','integer'],
+            'selectedBeds.*.quantity' => ['required_if:selectedBeds.*.isSelected,true'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+
+            'selectedBeds.*.quantity.required_if' => 'The quantity field is required when the bed is selected',
 
         ];
     }
