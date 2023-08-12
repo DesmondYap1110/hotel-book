@@ -6,11 +6,15 @@ import { VueMultiImageUpload } from '@zakerxa/vue-multiple-image-upload';
 import Toggle from '@vueform/toggle';
 import store from '../../stores/beds';
 import { useErrors } from '../../errors';
-const { errors, get, record } = useErrors();
+const { errors, get, record,clear} = useErrors();
 
 const beds = store.state.beds;
 
-let uploadedImages = [];
+const components = {
+    VueMultiImageUpload,
+};
+
+const uploadedImages = ref([]);
 
 const notify = () => {
     toast.success('Succesfully Create Room Type!!', {
@@ -30,37 +34,14 @@ const form = reactive({
 
 const max = ref(1000);
 const component = ref({});
-const options = ref({
-    max: "Max",
-    ready: "Ready",
-    select: "Choosed",
-});
+
 const imageSize = 2000000; // 2MB
 const formatType = ['image/jpeg', 'image/png', 'image/jpg'];
 
 const images = (e) => {
-    uploadedImages = e;
-
+    uploadedImages.value = e;
 };
 
-const components = {
-    VueMultiImageUpload,
-};
-
-
-// const toggleBedSelection = (bed) => {
-
-//     const selected = bed.isSelected;
-//     if (selected) {
-//         form.selectedBeds.push(bed);
-//     } else {
-//         const index = form.selectedBeds.findIndex(b => b.id === bed.id);
-//         if (index !== -1) {
-//             form.selectedBeds.splice(index, 1);
-
-//         }
-//     }
-// }
 
 const toggleBedSelection = (bed) => {
     if (bed.isSelected) {
@@ -90,46 +71,41 @@ const resetForm = () => {
     bed.quantity = null;     // Reset quantity to null
     // You might need to reset other properties if necessary
   });
+  uploadedImages.value = [];
+  component.value.clear = true;
+    Object.keys(form).forEach((key) => {
+        clear(key);
+    });
 };
 
 const submitForm = () => {
 
-    console.log(beds);
+ 
+    const formData = new FormData();
+    let index = 0; // Initialize the index
 
-
-const formData = new FormData();
-let index = 0; // Initialize the index
-
-for (const key in form) {
-    if (key !== 'selectedBeds') {
-        formData.append(key, form[key]);
-    } else {
-        for (const bedId in form.selectedBeds) {
-            const bed = form.selectedBeds[bedId];
-            for (const bedKey in bed) {
-                formData.append(`selectedBeds[${index}][${bedKey}]`, bed[bedKey]);
+    for (const key in form) {
+        if (key !== 'selectedBeds') {
+            formData.append(key, form[key]);
+        } else {
+            for (const bedId in form.selectedBeds) {
+                const bed = form.selectedBeds[bedId];
+                for (const bedKey in bed) {
+                    formData.append(`selectedBeds[${index}][${bedKey}]`, bed[bedKey]);
+                }
+                index++; // Increment the index for each bed
             }
-            index++; // Increment the index for each bed
         }
     }
-}
 
-    // beds.forEach((bed, index) => {
-    //     for (const bedKey in bed) {
-    //         formData.append(`selectedBeds[${index}][${bedKey}]`, bed[bedKey]);
-    //     }
-    // });
-
-    uploadedImages.forEach((image, index) => {
+    uploadedImages.value.forEach((image, index) => {
         formData.append(`images[${index}]`, image);
     });
 
-    axios.post('/api/types', formData)
+    axios.post('/api/room-types', formData)
         .then((response) => {
-            // location.reload();
             resetForm();
             notify();
-
         })
         .catch((error) => {
             // errors.value.record(error.response.data.errors);
@@ -381,7 +357,7 @@ p {
 
                 <div class="row">
                     <div class="col-md-12  text-right">
-                        <button type="button" class="btn btn-primary">Cancel</button>
+                        <button type="button" class="btn btn-primary" @click="resetForm()">Cancel</button>
                         <button type="button" @click="submitForm" class="btn btn-warning ml-2">Save</button>
                     </div>
                 </div>
