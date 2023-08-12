@@ -1,4 +1,6 @@
 <script setup>
+import { toast} from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 import { ref, reactive } from 'vue';
 import { VueMultiImageUpload } from '@zakerxa/vue-multiple-image-upload';
 import Toggle from '@vueform/toggle';
@@ -10,6 +12,12 @@ const beds = store.state.beds;
 
 let uploadedImages = [];
 
+const notify = () => {
+    toast.success('Succesfully Create Room Type!!', {
+        theme: 'colored',
+        position: toast.POSITION.BOTTOM_RIGHT,
+    });
+}
 // Create a reactive form object
 const form = reactive({
     name: '',
@@ -17,6 +25,7 @@ const form = reactive({
     description: '',
     max_adult: '',
     max_child: '',
+    selectedBeds:{},
 });
 
 const max = ref(1000);
@@ -38,36 +47,78 @@ const components = {
     VueMultiImageUpload,
 };
 
+
+// const toggleBedSelection = (bed) => {
+
+//     const selected = bed.isSelected;
+//     if (selected) {
+//         form.selectedBeds.push(bed);
+//     } else {
+//         const index = form.selectedBeds.findIndex(b => b.id === bed.id);
+//         if (index !== -1) {
+//             form.selectedBeds.splice(index, 1);
+
+//         }
+//     }
+// }
+
 const toggleBedSelection = (bed) => {
-
-    const selected = bed.isSelected;
-    // if (selected) {
-    //     form.selectedBeds.push(bed);
-    // } else {
-    //     const index = form.selectedBeds.findIndex(b => b.id === bed.id);
-    //     if (index !== -1) {
-    //         form.selectedBeds.splice(index, 1);
-
-    //     }
-    // }
-
+    if (bed.isSelected) {
+  form.selectedBeds[bed.id] = {
+    id: bed.id,
+    isSelected: bed.isSelected,
+    name: bed.name,
+    quantity: bed.quantity,
+  };
+} else {
+  if (form.selectedBeds.hasOwnProperty(bed.id)) {
+    delete form.selectedBeds[bed.id];
+  }
 }
+};
+
+const resetForm = () => {
+  form.name = '';
+  form.quantity = '';
+  form.description = '';
+  form.max_adult = '';
+  form.max_child = '';
+  form.selectedBeds= {};
+
+  beds.forEach((bed, index) => {
+    bed.isSelected = false;  // Reset isSelected to false
+    bed.quantity = null;     // Reset quantity to null
+    // You might need to reset other properties if necessary
+  });
+};
 
 const submitForm = () => {
 
     console.log(beds);
 
-    const formData = new FormData();
 
-    for (const key in form) {
+const formData = new FormData();
+let index = 0; // Initialize the index
+
+for (const key in form) {
+    if (key !== 'selectedBeds') {
         formData.append(key, form[key]);
-    }
-
-    beds.forEach((bed, index) => {
-        for (const bedKey in bed) {
-            formData.append(`selectedBeds[${index}][${bedKey}]`, bed[bedKey]);
+    } else {
+        for (const bedId in form.selectedBeds) {
+            const bed = form.selectedBeds[bedId];
+            for (const bedKey in bed) {
+                formData.append(`selectedBeds[${index}][${bedKey}]`, bed[bedKey]);
+            }
+            index++; // Increment the index for each bed
         }
-    });
+    }
+}
+
+    // beds.forEach((bed, index) => {
+    //     for (const bedKey in bed) {
+    //         formData.append(`selectedBeds[${index}][${bedKey}]`, bed[bedKey]);
+    //     }
+    // });
 
     uploadedImages.forEach((image, index) => {
         formData.append(`images[${index}]`, image);
@@ -75,7 +126,10 @@ const submitForm = () => {
 
     axios.post('/api/types', formData)
         .then((response) => {
-            location.reload();
+            // location.reload();
+            resetForm();
+            notify();
+
         })
         .catch((error) => {
             // errors.value.record(error.response.data.errors);
@@ -195,9 +249,7 @@ p {
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
+                    <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="/admin/dashboard">Home</a>
                         </li>
@@ -276,7 +328,7 @@ p {
                                                     <input type="number" min="1" max="5" class="form-control"
                                                         placeholder="Enter quantity of bed"
                                                         :name="'selectedBeds.' + index + '.quantity'"
-                                                        v-model="item.quantity">
+                                                        v-model="item.quantity" @change="toggleBedSelection(item)">
                                                     <div>
                                                         <span class="help is-danger"
                                                             v-text="get('selectedBeds.' + index + '.quantity')"></span>

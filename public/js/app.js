@@ -22113,12 +22113,16 @@ var RoomTypesLists = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(f
 var RoomTypesAdd = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
   return __webpack_require__.e(/*! import() | room-add */ "room-add").then(__webpack_require__.bind(__webpack_require__, /*! ./components/Types/Add.vue */ "./resources/js/components/Types/Add.vue"));
 });
+var RoomTypesShow = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
+  return __webpack_require__.e(/*! import() | room-add */ "room-add").then(__webpack_require__.bind(__webpack_require__, /*! ./components/Types/Show.vue */ "./resources/js/components/Types/Show.vue"));
+});
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('example-component', ExampleComponent);
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('welcome-component', WelcomeComponent);
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('rooms-lists', RoomsLists);
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-add', RoomAdd);
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-types-lists', RoomTypesLists);
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-types-add', RoomTypesAdd);
+_main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-types-show', RoomTypesShow);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_main_app__WEBPACK_IMPORTED_MODULE_1__.app);
 
 /***/ }),
@@ -38528,12 +38532,15 @@ ${codeFrame}` : message);
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
 /******/ 			id: moduleId,
-/******/ 			// no module.loaded needed
+/******/ 			loaded: false,
 /******/ 			exports: {}
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -38702,6 +38709,15 @@ ${codeFrame}` : message);
 /******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/node module decorator */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nmd = (module) => {
+/******/ 			module.paths = [];
+/******/ 			if (!module.children) module.children = [];
+/******/ 			return module;
 /******/ 		};
 /******/ 	})();
 /******/ 	

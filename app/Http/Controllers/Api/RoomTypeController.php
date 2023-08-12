@@ -17,6 +17,7 @@ class RoomTypeController extends Controller
         $roomType = RoomType::with('roomImages')->paginate(10);
         return RoomTypeResource::collection($roomType);
     }
+
     public function store(RoomTypesRequest $request)
     {
         $beds = $request->input('selectedBeds');
@@ -62,5 +63,10 @@ class RoomTypeController extends Controller
                 $roomType->roomImages()->create(['images' => $fileName]);
             }
         }
+    }
+
+    public function show(RoomType $roomType){
+        $roomType->load('roomImages');
+       return new RoomTypeResource($roomType);
     }
 }

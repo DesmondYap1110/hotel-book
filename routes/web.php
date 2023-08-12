@@ -32,9 +32,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
     Route::resource('rooms', RoomController::class)->only(['index','create','store','edit', 'update','destroy']);
 
-    Route::resource('room_types', RoomTypeController::class)->only(['index','create','store','edit', 'update','destroy']);
+    Route::resource('room-types', RoomTypeController::class)->only(['index','create','show','store','edit', 'update','destroy']);
 
-    Route::resource('room_facilities', RoomFacilityController::class)->only(['index','create','store','edit', 'update','destroy']);
+    Route::resource('room-facilities', RoomFacilityController::class)->only(['index','create','store','edit', 'update','destroy']);
 });
 
 

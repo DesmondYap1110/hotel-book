@@ -224,7 +224,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="/admin/room_types" active-class="active" class="nav-link">
+                            <a href="{{ route('admin.room-types.index') }}" active-class="active" class="nav-link">
                                 <i class="nav-icon fas fa-bed"></i>
                                 <p>
                                     Room Types
