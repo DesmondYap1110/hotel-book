@@ -16,7 +16,7 @@ use App\Http\Controllers\Api\RoomTypeController;
 |
 */
 
-Route::resource('room-types', RoomTypeController::class)->only(['index','store','show']);
+Route::resource('room-types', RoomTypeController::class)->only(['index','store','show','destroy']);
 
 
 

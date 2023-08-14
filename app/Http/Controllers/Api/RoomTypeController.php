@@ -69,4 +69,8 @@ class RoomTypeController extends Controller
         $roomType->load('roomImages');
        return new RoomTypeResource($roomType);
     }
+
+    public function destroy(RoomType $roomType){
+        $roomType->delete();
+    }
 }
