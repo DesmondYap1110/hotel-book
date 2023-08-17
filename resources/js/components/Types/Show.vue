@@ -3,10 +3,6 @@ import { defineProps, ref,onMounted,computed} from "vue";
 
 
 const props = defineProps({
-    options: {
-        type: Object,
-        default: () => ({}),
-    },
     roomType_id: {
         type: Number, // You can adjust the type as needed
         required: true // Or false, depending on whether it's required
@@ -33,34 +29,6 @@ const getRoomType = () =>{
         });
 
 }
-const zoomedIndex = ref(-1);
-const currentIndex = ref(0);
-const isOverlayActive = ref(false);
-
-const isPrevDisabled = computed(() => currentIndex.value === 0);
-// const isNextDisabled = computed(() => currentIndex.value === roomTypes.value.data.images.length - 1);
-
-const prev = () => {
-  if (!isPrevDisabled.value) {
-    currentIndex.value--;
-    scrollToCurrent();
-  }
-};
-
-const next = () => {
-  if (!isNextDisabled.value) {
-    currentIndex.value++;
-    scrollToCurrent();
-  }
-};
-
-const scrollToCurrent = () => {
-  const slider = document.getElementById('slider-container');
-  const currentSlide = slider.querySelector('.slide:nth-child(' + (currentIndex.value + 1) + ')');
-  if (currentSlide) {
-    slider.scrollLeft = currentSlide.offsetLeft - (slider.offsetWidth - currentSlide.offsetWidth) / 2;
-  }
-};
 
 </script>
 
@@ -85,7 +53,7 @@ const scrollToCurrent = () => {
     <div class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-8">
                         <div class="card">
                             <div class="card-body">
                                 <!-- <tabs>
@@ -96,28 +64,30 @@ const scrollToCurrent = () => {
                                         <detail :options="options" @DetailChanged="handleDetailChanged"></detail>
                                     </tab>
                                 </tabs> -->
-                                <div class="title-name">
-                                    {{ roomTypes.data.name}}
-                                </div>
 
-                                <div>
-                                    <div id="slider-container" class="slider">
-                                        <div v-for="(image, index) in roomTypes.data.images" :key="index" class="slide">
-                                            <img :src="'/storage/room_images/' + image.images" :class="{ 'zoomed': zoomedIndex === index }" @click="toggleZoom(index)" />
-                                        </div>
-                                        <div @click="prev" class="control-prev-btn" :class="{ 'disabled': isPrevDisabled }">
-                                            <i class="fas fa-arrow-left"></i>
-                                          </div>
-                                          <div @click="next" class="control-next-btn" :class="{ 'disabled': isNextDisabled }">
-                                            <i class="fas fa-arrow-right"></i>
-                                          </div>
-                                    </div>
-                                    <!-- <div class="overlay" :class="{ 'active': isOverlayActive }"></div> -->
-                                </div>
+
 
                             </div>
                         </div>
                 </div>
+
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- <tabs>
+                                <tab title="General" selected>
+                                    <general @formChanged="handleFormChanged"></general>
+                                </tab>
+                                <tab title="Data">
+                                    <detail :options="options" @DetailChanged="handleDetailChanged"></detail>
+                                </tab>
+                            </tabs> -->
+
+
+
+                        </div>
+                    </div>
+            </div>
             </div>
         </div>
     </div>

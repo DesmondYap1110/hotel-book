@@ -29,6 +29,10 @@ const RoomTypesShow = defineAsyncComponent(()=>
     import(/* webpackChunkName: "room-add" */ "./components/Types/Show.vue")
 );
 
+const RoomTypesEdit = defineAsyncComponent(()=>
+    import(/* webpackChunkName: "room-add" */ "./components/Types/Edit.vue")
+);
+
 
 app.component('example-component',ExampleComponent);
 app.component('welcome-component',WelcomeComponent);
@@ -37,4 +41,5 @@ app.component('room-add',RoomAdd);
 app.component('room-types-lists',RoomTypesLists);
 app.component('room-types-add',RoomTypesAdd);
 app.component('room-types-show',RoomTypesShow);
+app.component('room-types-edit',RoomTypesEdit);
 export default app;

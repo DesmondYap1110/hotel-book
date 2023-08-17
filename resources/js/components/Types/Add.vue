@@ -1,18 +1,14 @@
 <script setup>
+import uploadImage from '../uploadImage.vue'
 import { toast} from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import { ref, reactive } from 'vue';
-import { VueMultiImageUpload } from '@zakerxa/vue-multiple-image-upload';
 import Toggle from '@vueform/toggle';
 import store from '../../stores/beds';
 import { useErrors } from '../../errors';
 const { errors, get, record,clear} = useErrors();
 
 const beds = store.state.beds;
-
-const components = {
-    VueMultiImageUpload,
-};
 
 const uploadedImages = ref([]);
 
@@ -22,7 +18,7 @@ const notify = () => {
         position: toast.POSITION.BOTTOM_RIGHT,
     });
 }
-// Create a reactive form object
+
 const form = reactive({
     name: '',
     quantity: '',
@@ -33,14 +29,9 @@ const form = reactive({
 });
 
 const max = ref(1000);
-const component = ref({});
 
 const imageSize = 2000000; // 2MB
 const formatType = ['image/jpeg', 'image/png', 'image/jpg'];
-
-const images = (e) => {
-    uploadedImages.value = e;
-};
 
 
 const toggleBedSelection = (bed) => {
@@ -59,28 +50,24 @@ const toggleBedSelection = (bed) => {
 };
 
 const resetForm = () => {
-  form.name = '';
-  form.quantity = '';
-  form.description = '';
-  form.max_adult = '';
-  form.max_child = '';
-  form.selectedBeds= {};
+    form.name = '';
+    form.quantity = '';
+    form.description = '';
+    form.max_adult = '';
+    form.max_child = '';
+    form.selectedBeds= {};
 
-  beds.forEach((bed, index) => {
-    bed.isSelected = false;  // Reset isSelected to false
-    bed.quantity = null;     // Reset quantity to null
-    // You might need to reset other properties if necessary
-  });
-  uploadedImages.value = [];
-  component.value.clear = true;
-    Object.keys(form).forEach((key) => {
-        clear(key);
+    beds.forEach((bed, index) => {
+        bed.isSelected = false;  // Reset isSelected to false
+        bed.quantity = null;     // Reset quantity to null
+        // You might need to reset other properties if necessary
     });
+    uploadedImages.value = [];
+
 };
 
 const submitForm = () => {
 
- 
     const formData = new FormData();
     let index = 0; // Initialize the index
 
@@ -102,9 +89,12 @@ const submitForm = () => {
         formData.append(`images[${index}]`, image);
     });
 
+
     axios.post('/api/room-types', formData)
         .then((response) => {
             resetForm();
+            // uploadImageRef.value.reset();
+            window.dispatchEvent(new Event('resetChildComponent'));
             notify();
         })
         .catch((error) => {
@@ -240,7 +230,7 @@ p {
 
     <div class="content">
         <div class="container-fluid">
-            <form @submit.prevent="">
+            <form @submit.prevent=""  enctype="multipart/form-data">
                 <div class="row d-flex">
                     <div class="col-md-6">
                         <div class="card">
@@ -261,10 +251,13 @@ p {
 
                                     </div>
 
-                                    <vue-multi-image-upload @data-image="images" :max="10" :data-reset="component"
-                                        :options="options" :image-size="imageSize" :image-format="formatType" />
+                                    <!-- <vue-multi-image-upload @data-image="images" :max="10" :data-reset="component"
+                                        :options="options" :image-size="imageSize" :image-format="formatType" /> -->
+                                        <uploadImage ref="uploadImageRef" v-model:uploadedImages="uploadedImages"></uploadImage>
 
-                                    <button @click="component.clear = true">Clear</button>
+
+
+                                    <!-- <button @click="component.clear = true">Clear</button> -->
 
                                     <div class="form-group">
                                         <label for="description">Description</label>

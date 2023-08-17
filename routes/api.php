@@ -17,6 +17,6 @@ use App\Http\Controllers\Api\RoomTypeController;
 */
 
 Route::resource('room-types', RoomTypeController::class)->only(['index','store','show','destroy']);
-
+Route::post('room-types/update/{room_type}',[RoomTypeController::class,'update'])->name('room-types.update');
 
 

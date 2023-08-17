@@ -27,4 +27,11 @@ class RoomTypeController extends Controller
         return view('admin.types.add');
     }
 
+    public function edit(RoomType $roomType){
+
+        return view('admin.types.edit',[
+            'roomType' => $roomType,
+        ]);
+    }
+
 }

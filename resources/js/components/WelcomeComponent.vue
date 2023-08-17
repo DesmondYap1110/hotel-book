@@ -1,195 +1,135 @@
 <template>
-    <div>
-        <h3>Simple Slider With Zoom</h3>
-        <div id="slider-container" class="slider">
-            <div v-for="(image, index) in images" :key="index" class="slide">
-                <img :src="image" :class="{ 'zoomed': zoomedIndex === index }" @click="toggleZoom(index)" />
-            </div>
-            <div @click="prev" class="control-prev-btn">
-                <i class="fas fa-arrow-left"></i>
-            </div>
-            <div @click="next" class="control-next-btn">
-                <i class="fas fa-arrow-right"></i>
-            </div>
+    <div class="upload__box">
+      <div class="upload__btn-box">
+        <label class="upload__btn">
+          <p>Upload images</p>
+          <input type="file" multiple data-max_length="20" class="upload__inputfile" @change="handleFileChange">
+        </label>
+      </div>
+      <div class="upload__img-wrap">
+        <div v-for="(image, index) in uploadedImages" :key="index" class="upload__img-box">
+          <div :style="{ backgroundImage: `url(${getImageUrl(image)})` }" :data-number="index" :data-file="image.name" class="img-bg">
+            <div class="upload__img-close" @click="removeImage(index)"></div>
+          </div>
         </div>
-        <div class="overlay" :class="{ 'active': isOverlayActive }"></div>
+      </div>
     </div>
-</template>
+  </template>
 
-<script setup>
-import { ref } from 'vue';
+  <script setup>
+  import { ref } from 'vue';
 
-const images = [
-    "https://images.unsplash.com/photo-1574482620811-1aa16ffe3c82?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=20",
-    "https://images.unsplash.com/photo-1574451311232-cb647e9d71f9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=20",
-    "https://images.unsplash.com/photo-1574449423472-4bc6a3d2473d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=20",
-    "https://images.unsplash.com/photo-1574459472673-09bbda49102a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=928&q=20",
-    "https://images.unsplash.com/photo-1479981280584-037818c1297d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=20",
-    "https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=20",
-    "https://images.unsplash.com/photo-1560259324-12a044e67c34?ixlib=rb-1.2.1&auto=format&fit=crop&w=967&q=20",
-    "images.unsplash.com/photo-1532787799187-93655e51d472?ixlib=rb-1.2.1&auto=format&fit=crop&w=967&q=20",
-    // Add more image URLs here
-];
+  const uploadedImages = ref([]);
+  const maxImageCount = 20;
 
-const zoomedIndex = ref(-1);
-const isOverlayActive = ref(false);
+  const handleFileChange = (e) => {
+    const filesArr = Array.from(e.target.files);
+    filesArr.forEach((file) => {
+      if (!file.type.match('image.*')) {
+        return;
+      }
 
-const prev = () => {
-    document.getElementById('slider-container').scrollLeft -= 270;
-};
+      if (uploadedImages.value.length >= maxImageCount) {
+        return;
+      }
 
-const next = () => {
-    document.getElementById('slider-container').scrollLeft += 270;
-};
+      uploadedImages.value.push(file);
+    });
+  };
 
-const toggleZoom = (index) => {
-    zoomedIndex.value = zoomedIndex.value === index ? -1 : index;
-    isOverlayActive.value = !isOverlayActive.value;
-};
-</script>
+  const removeImage = (index) => {
+    uploadedImages.value.splice(index, 1);
+  };
 
-<style>
-@import "https://fonts.googleapis.com/css?family=Open+Sans:800&display=swap";
+  const getImageUrl = (image) => URL.createObjectURL(image);
+  </script>
 
-body {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: open sans;
-    background: #f8f8f8;
+<style scoped>
+html * {
+  box-sizing: border-box;
 }
 
-h3 {
-    text-align: center;
-    margin: 6% auto;
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #444;
+p {
+  margin: 0;
 }
 
-.slider {
-    display: flex;
-    height: 350px;
-    max-height: auto;
-    overflow-y: hidden;
-    overflow-x: scroll !important;
-    padding: 16px;
-    transform: scroll(calc(var(--i, 0)/var(--n)*-100%));
-    scroll-behavior: smooth;
+.upload__box {
+  padding: 40px;
 }
 
-.slider::-webkit-scrollbar {
-    height: 5px;
-    width: 150px;
-    display: none;
+.upload__inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
 
-.slider::-webkit-scrollbar-track {
-    background: transparent;
+.upload__btn {
+  display: inline-block;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  min-width: 116px;
+  padding: 5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid;
+  background-color: #4045ba;
+  border-color: #4045ba;
+  border-radius: 10px;
+  line-height: 26px;
+  font-size: 14px;
 }
 
-.slider::-webkit-scrollbar-thumb {
-    background: #888;
+.upload__btn:hover {
+  background-color: unset;
+  color: #4045ba;
+  transition: all 0.3s ease;
 }
 
-.slider::-webkit-scrollbar-thumb:hover {
-    background: #555;
+.upload__btn-box {
+  margin-bottom: 10px;
 }
 
-.slider img:hover {
-    transform: scale(1.05);
-    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.15);
+.upload__img-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -10px;
 }
 
-.slide {
-
-    position: relative;
+.upload__img-box {
+  width: 200px;
+  padding: 0 10px;
+  margin-bottom: 12px;
 }
 
-.slide img {
-    height: 100%;
-    width: 250px;
-    margin: 0 10px;
-    object-fit: cover;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: .25s ease-in-out;
+.upload__img-close {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  text-align: center;
+  line-height: 24px;
+  z-index: 1;
+  cursor: pointer;
 }
 
-.control-prev-btn {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    background-color: rgba(255, 255, 255, 0.55);
-    height: 100px;
-    line-height: 100px;
-    width: 45px;
-    text-align: center;
-    box-shadow: 0 1px 3px #888;
-    user-select: none;
-    color: #444;
-    cursor: pointer;
+.upload__img-close:after {
+  content: '\2716';
+  font-size: 14px;
+  color: white;
 }
 
-.control-next-btn {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    background-color: rgba(255, 255, 255, 0.55);
-    height: 100px;
-    line-height: 100px;
-    width: 45px;
-    text-align: center;
-    box-shadow: 0 1px 3px #888;
-    user-select: none;
-    color: #444;
-    cursor: pointer;
+.img-bg {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  padding-bottom: 100%;
 }
-
-.slide img.zoomed {
-    width: 500px;
-    height: 600px;
-    position: fixed;
-    left: 25%;
-    top: 0%;
-    z-index: 1000;
-    transform: scale(1) translatey(0) !important;
-
-}
-
-.overlay {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, .45);
-    top: 0;
-    display: none;
-}
-
-.overlay.active {
-    display: block;
-}
-
-@media only screen and (max-width: 420px) {
-    .slider {
-        padding: 0;
-    }
-
-    .slide {
-        padding: 16px 10px;
-    }
-
-    .slide img {
-        margin: 0;
-    }
-
-    .control-prev-btn {
-        top: 37%;
-    }
-
-    .control-next-btn {
-        top: 37%;
-    }
-}</style>
-
-
+</style>
