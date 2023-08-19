@@ -22116,6 +22116,9 @@ var RoomTypesAdd = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(fun
 var RoomTypesShow = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
   return __webpack_require__.e(/*! import() | room-add */ "room-add").then(__webpack_require__.bind(__webpack_require__, /*! ./components/Types/Show.vue */ "./resources/js/components/Types/Show.vue"));
 });
+var RoomTypesEdit = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
+  return __webpack_require__.e(/*! import() | room-add */ "room-add").then(__webpack_require__.bind(__webpack_require__, /*! ./components/Types/Edit.vue */ "./resources/js/components/Types/Edit.vue"));
+});
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('example-component', ExampleComponent);
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('welcome-component', WelcomeComponent);
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('rooms-lists', RoomsLists);
@@ -22123,6 +22126,7 @@ _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-add', RoomAdd);
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-types-lists', RoomTypesLists);
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-types-add', RoomTypesAdd);
 _main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-types-show', RoomTypesShow);
+_main_app__WEBPACK_IMPORTED_MODULE_1__.app.component('room-types-edit', RoomTypesEdit);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_main_app__WEBPACK_IMPORTED_MODULE_1__.app);
 
 /***/ }),

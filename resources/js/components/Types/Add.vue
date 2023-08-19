@@ -63,6 +63,8 @@ const resetForm = () => {
         // You might need to reset other properties if necessary
     });
     uploadedImages.value = [];
+    // Clear all errors
+    Object.keys(errors).forEach(field => clear(field));
 
 };
 
