@@ -1,12 +1,16 @@
 <script setup>
 import uploadImage from '../uploadImage.vue'
-import { toast} from 'vue3-toastify';
+import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import { ref, reactive } from 'vue';
 import Toggle from '@vueform/toggle';
 import store from '../../stores/beds';
 import { useErrors } from '../../errors';
-const { errors, get, record,clear} = useErrors();
+const { errors, get, record, clear } = useErrors();
+import { useFacilitiesAndServicesStore } from '../../store/facilities';
+const facilitiesAndServicesStore = useFacilitiesAndServicesStore();
+const categories = facilitiesAndServicesStore.getCategories;
+
 
 const beds = store.state.beds;
 
@@ -25,7 +29,8 @@ const form = reactive({
     description: '',
     max_adult: '',
     max_child: '',
-    selectedBeds:{},
+    selectedBeds: {},
+    selectedItems:[],
 });
 
 const max = ref(1000);
@@ -36,17 +41,17 @@ const formatType = ['image/jpeg', 'image/png', 'image/jpg'];
 
 const toggleBedSelection = (bed) => {
     if (bed.isSelected) {
-  form.selectedBeds[bed.id] = {
-    id: bed.id,
-    isSelected: bed.isSelected,
-    name: bed.name,
-    quantity: bed.quantity,
-  };
-} else {
-  if (form.selectedBeds.hasOwnProperty(bed.id)) {
-    delete form.selectedBeds[bed.id];
-  }
-}
+        form.selectedBeds[bed.id] = {
+            id: bed.id,
+            isSelected: bed.isSelected,
+            name: bed.name,
+            quantity: bed.quantity,
+        };
+    } else {
+        if (form.selectedBeds.hasOwnProperty(bed.id)) {
+            delete form.selectedBeds[bed.id];
+        }
+    }
 };
 
 const resetForm = () => {
@@ -55,7 +60,8 @@ const resetForm = () => {
     form.description = '';
     form.max_adult = '';
     form.max_child = '';
-    form.selectedBeds= {};
+    form.selectedBeds = {};
+    form.selectedItems = [];
 
     beds.forEach((bed, index) => {
         bed.isSelected = false;  // Reset isSelected to false
@@ -232,7 +238,7 @@ p {
 
     <div class="content">
         <div class="container-fluid">
-            <form @submit.prevent=""  enctype="multipart/form-data">
+            <form @submit.prevent="" enctype="multipart/form-data">
                 <div class="row d-flex">
                     <div class="col-md-6">
                         <div class="card">
@@ -255,7 +261,7 @@ p {
 
                                     <!-- <vue-multi-image-upload @data-image="images" :max="10" :data-reset="component"
                                         :options="options" :image-size="imageSize" :image-format="formatType" /> -->
-                                        <uploadImage ref="uploadImageRef" v-model:uploadedImages="uploadedImages"></uploadImage>
+                                    <uploadImage ref="uploadImageRef" v-model:uploadedImages="uploadedImages"></uploadImage>
 
 
 
@@ -351,6 +357,36 @@ p {
                 </div>
 
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <p id="form-sub-title">
+                                    Facilities and Services
+                                </p>
+                                <div class="card-text">
+                                    <div class="row">
+                                        <div v-for="category in categories" :key="category.name"
+                                            class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                                            <h5>{{ category.name }}</h5>
+                                            <ul class="list-unstyled">
+                                                <li v-for="item in category.items" :key="item.id">
+                                                    <label class="form-check">
+                                                        <input type="checkbox" :value="item.id" v-model="form.selectedItems"
+                                                            class="form-check-input">
+                                                        {{ item.name }}
+                                                    </label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-md-12  text-right">
                         <button type="button" class="btn btn-primary" @click="resetForm()">Cancel</button>
                         <button type="button" @click="submitForm" class="btn btn-warning ml-2">Save</button>
@@ -361,3 +397,8 @@ p {
     </div>
 </template>
 
+<style scoped>
+.list-none {
+    list-style: none;
+}
+</style>

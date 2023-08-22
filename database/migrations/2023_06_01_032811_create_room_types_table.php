@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('single_bed')->nullable();
             $table->integer('queen_bed')->nullable();
             $table->integer('king_bed')->nullable();
+            $table->json('facilities'); // Use json or jsonb type for arrays
             $table->timestamps();
         });
     }

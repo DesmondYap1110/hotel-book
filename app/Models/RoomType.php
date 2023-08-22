@@ -19,6 +19,7 @@ class RoomType extends Model
         'queen_bed',
         'single_bed',
         'quantity',
+        'facilities',
     ];
 
     public function roomImages(){

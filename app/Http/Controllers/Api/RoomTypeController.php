@@ -22,6 +22,12 @@ class RoomTypeController extends Controller
 
     public function store(RoomTypesRequest $request)
     {
+        $facilities = $request->input('selectedItems');
+        $facilitiesArray = explode(',', $facilities); // Convert the string to an array
+        // Convert the array to valid JSON format
+        $facilitiesJson = json_encode($facilitiesArray);
+
+
         $beds = $request->input('selectedBeds');
         $king = null;
         $queen = null;
@@ -41,10 +47,19 @@ class RoomTypeController extends Controller
             }
         }
 
-        $data = $request->only('name', 'description', 'max_adult', 'max_child', 'quantity');
-        $data['king_bed'] = $king;
-        $data['queen_bed'] = $queen;
-        $data['single_bed'] = $single;
+        $data = [
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'max_adult' => $request->input('max_adult'),
+            'max_child' => $request->input('max_child'),
+            'quantity' => $request->input('quantity'),
+            'king_bed' => $king,
+            'queen_bed' => $queen,
+            'single_bed' => $single,
+            'facilities' => $facilitiesJson, // Assign the facilities array
+        ];
+
+
 
         $roomType = new RoomType($data);
         $roomType->save();
@@ -72,7 +87,13 @@ class RoomTypeController extends Controller
        return new RoomTypeResource($roomType);
     }
 
-    public function update(UpdateRoomTypesRequest $request, RoomType $roomType){
+    public function update(UpdateRoomTypesRequest $request, RoomType $roomType)
+    {
+
+        $facilities = $request->input('selectedItems');
+        $facilitiesArray = explode(',', $facilities); // Convert the string to an array
+        // Convert the array to valid JSON format
+        $facilitiesJson = json_encode($facilitiesArray);
 
         $beds = $request->input('selectedBeds');
         $king = null;
@@ -93,10 +114,22 @@ class RoomTypeController extends Controller
             }
         }
 
-        $data = $request->only('name', 'description', 'max_adult', 'max_child', 'quantity');
-        $data['king_bed'] = $king;
-        $data['queen_bed'] = $queen;
-        $data['single_bed'] = $single;
+        // $data = $request->only('name', 'description', 'max_adult', 'max_child', 'quantity');
+        // $data['king_bed'] = $king;
+        // $data['queen_bed'] = $queen;
+        // $data['single_bed'] = $single;
+        $data = [
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'max_adult' => $request->input('max_adult'),
+            'max_child' => $request->input('max_child'),
+            'quantity' => $request->input('quantity'),
+            'king_bed' => $king,
+            'queen_bed' => $queen,
+            'single_bed' => $single,
+            'facilities' => $facilitiesJson, // Assign the facilities array
+        ];
+
 
         $roomType->update($data);
         $roomType->save();

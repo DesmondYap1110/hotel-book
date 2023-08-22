@@ -8,6 +8,9 @@ import store from '../../stores/beds';
 import { useErrors } from '../../errors';
 import axios from 'axios';
 const { errors, get, record,clear} = useErrors();
+import { useFacilitiesAndServicesStore } from '../../store/facilities';
+const facilitiesAndServicesStore = useFacilitiesAndServicesStore();
+const categories = facilitiesAndServicesStore.getCategories;
 
 const props = defineProps({
     roomType_id: {
@@ -40,6 +43,7 @@ const form = reactive({
     max_adult: '',
     max_child: '',
     selectedBeds:{},
+    selectedItems:[],
 });
 
 const max = ref(1000);
@@ -113,6 +117,7 @@ const getRoomTypesDetail = () =>{
         form.description = responseData.description;
         form.max_adult = responseData.max_adult?responseData.max_adult:'';
         form.max_child = responseData.max_child?responseData.max_child:'';
+        form.selectedItems = JSON.parse(responseData.facilities);
         imageResponse.value = responseData.images;
 
 
@@ -412,6 +417,37 @@ p {
                     </div>
 
                 </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <p id="form-sub-title">
+                                    Facilities and Services
+                                </p>
+                                <div class="card-text">
+                                    <div class="row">
+                                        <div v-for="category in categories" :key="category.name"
+                                            class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                                            <h5>{{ category.name }}</h5>
+                                            <ul class="list-unstyled">
+                                                <li v-for="item in category.items" :key="item.id">
+                                                    <label class="form-check">
+                                                        <input type="checkbox" :value="item.id" v-model="form.selectedItems"
+                                                            class="form-check-input">
+                                                        {{ item.name }}
+                                                    </label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
                 <div class="row">
                     <div class="col-md-12  text-right">

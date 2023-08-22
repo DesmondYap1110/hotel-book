@@ -25,6 +25,7 @@ class RoomTypeResource extends JsonResource
             'queen_bed'=>$this->queen_bed,
             'king_bed'=> $this->king_bed,
             'images'=>$this->whenLoaded('roomImages'),
+            'facilities'=> $this->facilities,
 
 
         ];
