@@ -15,7 +15,15 @@ return new class extends Migration
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
+            $table->string('room_number', 10);
+            $table->unsignedBigInteger('room_type_id');
             $table->timestamps();
+
+            // Define foreign key constraint
+            $table->foreign('room_type_id')
+                  ->references('id')
+                  ->on('room_types')
+                  ->onDelete('cascade');
         });
     }
 

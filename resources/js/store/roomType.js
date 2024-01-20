@@ -41,6 +41,12 @@ export const userRoomTypeStore = defineStore({
       }
     },
 
+    clearData() {
+      this.roomTypes.data = []; // Clear the fetched room types data
+      this.roomTypes.pagination.links = {};
+      this.roomTypes.pagination.meta = {};
+    },
+
     toggleLoading() {
       this.isLoading = !this.isLoading;
     }

@@ -14,10 +14,19 @@
         </div>
       </div>
     </div>
+    <div>
+        <CountdownTmer :timer="timer"></CountdownTmer>
+
+
+    </div>
+
   </template>
 
   <script setup>
   import { ref } from 'vue';
+  import CountdownTmer from './CountdownTmer.vue';
+
+  const timer = ref({max:10,current:9});
 
   const uploadedImages = ref([]);
   const maxImageCount = 20;

@@ -15,7 +15,8 @@ class Room extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-      
+        'room_number',
+        'room_type_id',
     ];
 
     /**
@@ -35,5 +36,9 @@ class Room extends Model
     protected $casts = [
 
     ];
+
+    public function roomType(){
+        return $this->belongsTo(roomType::class);
+    }
 
 }

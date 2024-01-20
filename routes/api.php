@@ -4,6 +4,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RoomTypeController;
+use App\Http\Controllers\Api\RoomController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,5 +19,7 @@ use App\Http\Controllers\Api\RoomTypeController;
 
 Route::resource('room-types', RoomTypeController::class)->only(['index','store','show','destroy']);
 Route::post('room-types/update/{room_type}',[RoomTypeController::class,'update'])->name('room-types.update');
+
+Route::resource('rooms', RoomController::class)->only(['index','store']);
 
 
