@@ -46,7 +46,7 @@ var ALERT_THRESHOLD = 3;
         threshold: ALERT_THRESHOLD
       }
     };
-    var timePassed = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(TIME_LIMIT - TIME_CURRENT.value);
+    var timePassed = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(TIME_LIMIT.value - TIME_CURRENT.value);
     (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(function () {
       timePassed.value = TIME_LIMIT.value - TIME_CURRENT.value;
     });

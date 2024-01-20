@@ -69,7 +69,7 @@ const COLOR_CODES = {
 
 
 
-const timePassed = ref(TIME_LIMIT - TIME_CURRENT.value);
+const timePassed = ref(TIME_LIMIT.value - TIME_CURRENT.value);
 
 watch(() => {
   timePassed.value = TIME_LIMIT.value - TIME_CURRENT.value;
