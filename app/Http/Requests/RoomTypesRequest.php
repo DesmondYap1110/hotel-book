@@ -32,6 +32,7 @@ class RoomTypesRequest extends FormRequest
             'selectedBeds'=>['required'],
             'quantity'=>['required','integer'],
             'selectedBeds.*.quantity' => ['required_if:selectedBeds.*.isSelected,true'],
+            'room_prefix'=>['required'],
         ];
     }
 

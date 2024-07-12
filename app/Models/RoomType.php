@@ -20,6 +20,7 @@ class RoomType extends Model
         'single_bed',
         'quantity',
         'facilities',
+        'room_prefix',
     ];
 
     public function roomImages(){
@@ -27,6 +28,6 @@ class RoomType extends Model
     }
 
     public function rooms(){
-        return $this->belongsToMany(Room::class);
+        return $this->hasMany(Room::class);
     }
 }

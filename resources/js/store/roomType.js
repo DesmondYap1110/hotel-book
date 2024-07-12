@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+
 // Create a store
 export const userRoomTypeStore = defineStore({
   id: 'roomType',
@@ -13,7 +14,8 @@ export const userRoomTypeStore = defineStore({
         meta: {}
       }
     },
-    isLoading: false
+    isLoading: false,
+    selectedRoomTypes:{},
   }),
 
   getters: {
@@ -41,6 +43,17 @@ export const userRoomTypeStore = defineStore({
       }
     },
 
+    async getSelectedRoomTypes(roomTypeId){
+        try {
+            const response = await axios.get(`/api/room-types/${roomTypeId}`);
+            this.selectedRoomTypes.push(response.data); // Append fetched data
+          } catch (error) {
+            console.error('An error occurred while fetching room types:', error);
+          } finally {
+            this.toggleLoading();
+          }
+      },
+
     clearData() {
       this.roomTypes.data = []; // Clear the fetched room types data
       this.roomTypes.pagination.links = {};
@@ -51,4 +64,6 @@ export const userRoomTypeStore = defineStore({
       this.isLoading = !this.isLoading;
     }
   }
+
+
 });

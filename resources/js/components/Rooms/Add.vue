@@ -30,7 +30,7 @@
                     :key="type.id"
                     class="room-box"
                   >
-                    {{ type.room_number }}
+                    {{ selectedRoomType.room_prefix+'-'+type.room_number }}
                 </span>
                 </div>
               </div>
@@ -125,29 +125,11 @@ roomTypeStore.fetchRoomTypes();
 roomsStore.fetchRooms();
 });
 
-
+const selectedRoomType = ref([]);
 const selectedRooms = ref([]);
 const availableQuantity = ref([]);
 const isRoomAvailable = ref(false);
 
-// const handleTypeClick = async (type) => {
-//   activeTypeId.value = type.id;
-//   form.room_type_id = type.id;
-//   form.room_type = type.name;
-//   showForm.value = true;
-
-//   try {
-//     const roomsData = roomsStore.getRooms.data; // Access the getter directly
-//     const rooms = roomsData.filter(room => room.room_type_id === type.id);
-//     selectedRooms.value = rooms;
-
-//     const selectedRoomType = roomTypes.find(roomType => roomType.id === 1);
-//     const availableQuantity = selectedRoomType.quantity - selectedRooms.length;
-//     console.log(availableQuantity);
-//   } catch (error) {
-//     console.error('Error fetching rooms:', error);
-//   }
-// };
 
 const computedAvailableQuantity = computed(() => {
   return availableQuantity.value;
@@ -170,9 +152,9 @@ const handleTypeClick = async (type) => {
     const rooms = roomsData.filter(room => room.room_type_id === type.id);
     selectedRooms.value = rooms;
 
-    const selectedRoomType = roomTypes.data.find(roomType => roomType.id === type.id);
-    availableQuantity.value = selectedRoomType.quantity - selectedRooms.value.length;
-    console.log(availableQuantity.value);
+    selectedRoomType.value = roomTypes.data.find(roomType => roomType.id === type.id);
+    availableQuantity.value = selectedRoomType.value.quantity - selectedRooms.value.length;
+
 
   } catch (error) {
     console.error('Error fetching rooms:', error);

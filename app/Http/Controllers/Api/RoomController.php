@@ -11,18 +11,32 @@ class RoomController extends Controller
 {
     public function index()
     {
-        $rooms = Room::orderBy('room_number', 'asc')->paginate(10);
+        $rooms = Room::orderBy('room_type_id', 'asc')->paginate(100);
         return RoomResource::collection($rooms);
     }
 
     public function store(RoomRequest $request){
 
-        $roomNumbersArray = $request->input('room_number');
+        // $roomNumbersArray = $request->input('room_number');
 
-        foreach($roomNumbersArray as $roomNumber){
+        // foreach($roomNumbersArray as $roomNumber){
+        //     $data = [
+        //         'room_type_id' => $request->input('room_type_id'),
+        //         'room_number' => $roomNumber,
+        //     ];
+
+        //     $room = new Room($data);
+        //     $room->save();
+        // }
+        //
+
+        //auto create room with quantity insert
+        $roomNumbers = $request->input('quantity');
+
+        for ($i = 0; $i < $roomNumbers; $i++) {
             $data = [
-                'room_type_id' => $request->input('room_type_id'),
-                'room_number' => $roomNumber,
+                'room_type_id' =>  $request->input('room_type_id'),
+                'room_number' => $i + 1,
             ];
 
             $room = new Room($data);

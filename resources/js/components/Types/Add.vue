@@ -31,6 +31,7 @@ const form = reactive({
     max_child: '',
     selectedBeds: {},
     selectedItems:[],
+    room_prefix:'',
 });
 
 const max = ref(1000);
@@ -62,6 +63,7 @@ const resetForm = () => {
     form.max_child = '';
     form.selectedBeds = {};
     form.selectedItems = [];
+    form.room_prefix='';
 
     beds.forEach((bed, index) => {
         bed.isSelected = false;  // Reset isSelected to false
@@ -301,16 +303,16 @@ p {
                                                     <Toggle :value="item.id" v-model="item.isSelected"
                                                         @change="toggleBedSelection(item)" />
                                                     <span class="pl-3">{{ item.name }}</span>
-                                                <div v-if="item.isSelected" class="mt-2 form-group">
-                                                    <input type="number" min="1" max="5" class="form-control"
-                                                        placeholder="Enter quantity of bed"
-                                                        :name="'selectedBeds.' + index + '.quantity'"
-                                                        v-model="item.quantity" @change="toggleBedSelection(item)">
-                                                    <div>
-                                                        <span class="help is-danger"
-                                                            v-text="get('selectedBeds.' + index + '.quantity')"></span>
+                                                    <div v-if="item.isSelected" class="mt-2 form-group">
+                                                            <input type="number" min="1" max="5" class="form-control"
+                                                                placeholder="Enter quantity of bed"
+                                                                :name="'selectedBeds.' + index + '.quantity'"
+                                                                v-model="item.quantity" @change="toggleBedSelection(item)">
+                                                            <div>
+                                                                <span class="help is-danger"
+                                                                    v-text="get('selectedBeds.' + index + '.quantity')"></span>
+                                                            </div>
                                                     </div>
-                                                </div>
 
                                                 </p>
                                             </div>
@@ -344,6 +346,17 @@ p {
                                                 name="quantity" v-model="form.quantity">
                                             <div>
                                                 <span class="help is-danger" v-text="get('quantity')"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="room-name-prefix">
+                                        <div class="form-group col-md-12">
+                                            <label for="room-name-prefix">Room Name Prefix:</label>
+                                            <input  class="form-control" placeholder="Enter room name prefix exp:'s'-(auto generate room number)"
+                                                name="room-name-prefix" v-model="form.room_prefix">
+                                            <div>
+                                                <span class="help is-danger" v-text="get('room-name-prefix')"></span>
                                             </div>
                                         </div>
                                     </div>

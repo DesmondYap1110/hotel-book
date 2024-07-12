@@ -26,15 +26,15 @@ class RoomRequest extends FormRequest
         return [
             'quantity' =>['required','integer','min:1'],
             'room_type_id' =>['required'],
-            // 'room_numbers' => ['required', 'array'],
-            'room_number.*' => ['required', 'string', 'unique:rooms,room_number'],
+
+            // 'room_number.*' => ['required', 'string', 'unique:rooms,room_number'],
         ];
     }
 
     public function messages()
     {
         return [
-            'room_number.*.unique' => "The room number ':input' has already been selected.",
+            // 'room_number.*.unique' => "The room number ':input' has already been selected.",
         ];
     }
 }

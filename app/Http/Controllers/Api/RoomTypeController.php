@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\RoomType;
+use App\Models\Room;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -16,12 +17,13 @@ class RoomTypeController extends Controller
 {
     public function index()
     {
-        $roomType = RoomType::with('roomImages')->paginate(10);
+        $roomType = RoomType::with('roomImages')->paginate(100);
         return RoomTypeResource::collection($roomType);
     }
 
     public function store(RoomTypesRequest $request)
     {
+
         $facilities = $request->input('selectedItems');
         $facilitiesArray = explode(',', $facilities); // Convert the string to an array
         // Convert the array to valid JSON format
@@ -57,6 +59,7 @@ class RoomTypeController extends Controller
             'queen_bed' => $queen,
             'single_bed' => $single,
             'facilities' => $facilitiesJson, // Assign the facilities array
+            'room_prefix' => $request->input('room_prefix'),
         ];
 
 
@@ -80,10 +83,26 @@ class RoomTypeController extends Controller
                 $roomType->roomImages()->create(['images' => $fileName]);
             }
         }
+
+        //auto create room with quantity insert
+        $roomNumbers = $request->input('quantity');
+
+        for ($i = 0; $i < $roomNumbers; $i++) {
+            $data = [
+                'room_type_id' =>  $roomType->id,
+                'room_number' => $i + 1,
+            ];
+
+            $room = new Room($data);
+            $room->save();
+        }
+
+
     }
 
     public function show(RoomType $roomType){
         $roomType->load('roomImages');
+        $roomType->load('rooms');
        return new RoomTypeResource($roomType);
     }
 
