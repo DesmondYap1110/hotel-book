@@ -176,7 +176,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="" active-class="active"  class="nav-link">
+                            <a href="/admin/hotels" active-class="active"  class="nav-link">
                                 <i class="nav-icon fas fa-home"></i>
                                 <p>
                                     Hotel

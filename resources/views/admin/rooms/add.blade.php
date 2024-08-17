@@ -10,7 +10,7 @@
     </div> --}}
 
     <div class="pt-3">
-        <room-add></room-add>
+        <rooms-add></rooms-add>
     </div>
 </div>
 

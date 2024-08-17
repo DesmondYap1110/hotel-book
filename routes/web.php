@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\RoomTypeController;
 use App\Http\Controllers\Admin\RoomFacilityController;
+use App\Http\Controllers\Admin\HotelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +29,7 @@ Route::get('/', function () {
 
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::resource('rooms', HotelController::class)->only(['index','edit', 'update','destroy']);
+    Route::resource('hotels', HotelController::class)->only(['index','create','edit', 'update','destroy']);
 
     Route::resource('rooms', RoomController::class)->only(['index','create','store','edit', 'update','destroy']);
 
