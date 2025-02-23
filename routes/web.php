@@ -5,7 +5,7 @@ use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\RoomTypeController;
 use App\Http\Controllers\Admin\RoomFacilityController;
 use App\Http\Controllers\Admin\HotelController;
-
+use App\Http\Controllers\Admin\DashBoardController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,9 +17,11 @@ use App\Http\Controllers\Admin\HotelController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 // Route::get('/admin/dashboard', function () {
 //     return view('admin.rooms_list');
@@ -27,15 +29,24 @@ Route::get('/', function () {
 
 // Route::get('/admin/rooms', [RoomController::class, 'index']);
 
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::resource('hotels', HotelController::class)->only(['index','create','edit', 'update','destroy']);
+Auth::routes();
 
-    Route::resource('rooms', RoomController::class)->only(['index','create','store','edit', 'update','destroy']);
+Route::middleware(['auth'])->group(function(){
+    Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
-    Route::resource('room-types', RoomTypeController::class)->only(['index','create','show','store','edit', 'update','destroy']);
+        Route::get('/dashboard',[DashBoardController::class,'index'])->name('dashboard');
 
-    Route::resource('room-facilities', RoomFacilityController::class)->only(['index','create','store','edit', 'update','destroy']);
+        Route::resource('hotels', HotelController::class)->only(['index','create','edit', 'update','destroy']);
+
+        Route::resource('rooms', RoomController::class)->only(['index','create','store','edit', 'update','destroy']);
+
+        Route::resource('room-types', RoomTypeController::class)->only(['index','create','show','store','edit', 'update','destroy']);
+
+        Route::resource('room-facilities', RoomFacilityController::class)->only(['index','create','store','edit', 'update','destroy']);
+    });
 });
 
 
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

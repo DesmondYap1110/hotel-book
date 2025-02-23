@@ -167,7 +167,7 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <li class="nav-item">
-                            <a href="#" active-class="active" class="nav-link">
+                            <a href="/admin/dashboard" active-class="active" class="nav-link">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>
                                     Dashboard
@@ -233,7 +233,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="/admin/room_facilities" active-class="active" class="nav-link">
+                            <a href="#" active-class="active" class="nav-link">
                                 <i class="nav-icon 	fas fa-shower" aria-hidden="true"></i>
                                 <p>
                                     Room Facilities
@@ -242,7 +242,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="/admin/room_facilities" active-class="active" class="nav-link">
+                            <a href="#" active-class="active" class="nav-link">
                                 <i class="nav-icon fas fa-concierge-bell" aria-hidden="true"></i>
                                 <p>
                                     Services
@@ -251,7 +251,7 @@
                         </li>
 
                          <li class="nav-item">
-                            <form method="POST" action="" class="nav-link">
+                            <form method="POST" action="/logout" class="nav-link">
                                 @csrf
                                 <a href="#" onclick="event.preventDefault(); this.closest('form').submit();">
                                     <i class="nav-icon fas fa-sign-out-alt"></i>
