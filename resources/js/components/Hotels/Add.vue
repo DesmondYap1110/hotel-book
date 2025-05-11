@@ -5,29 +5,36 @@ import { ref,reactive } from 'vue';
 import { useErrors } from '../../errors';
 const { errors, get, record, clear } = useErrors();
 
-
+const max = ref(1000);
 const uploadedImages = ref([]);
 
 const form = reactive({
     name: '',
-    quantity: '',
     description: '',
-    policies:'',
-    check_in_from:'',
-    check_out_from:'',
-    check_in_until:'',
-    check_out_until:'',
-    receptional_open_until:'',
-    landmarkDistancePairs: [
-        { landmark: '', distance: '' }
-    ]
+    address: '',
+    city: '',
+    state: '',
+    country: '',
+    postal_code: '',
+    phone_number: '',
+    website_url: '',
+    chain_name: '',
+    policies: '',
+    cancellation_policies: '',
+    check_in_from: '',
+    check_in_until: '',
+    check_out_from: '',
+    check_out_until: '',
+    registration_no:'',
+
 
 });
 
 const resetForm = () => {
-    form.name = '';
-    form.quantity = '';
-    form.description = '';
+
+   Object.keys(form).forEach(key => {
+    form[key] = ''
+  });
 
     uploadedImages.value = [];
     // Clear all errors
@@ -37,9 +44,13 @@ const resetForm = () => {
 
 const submitForm = () => {
 
+     Object.keys(errors).forEach(field => clear(field));
     const formData = new FormData();
     let index = 0; // Initialize the index
 
+    for (const key in form) {
+        formData.append(key, form[key])
+    }
 
 
     uploadedImages.value.forEach((image, index) => {
@@ -47,9 +58,10 @@ const submitForm = () => {
     });
 
 
-    axios.post('/api/hotels', formData)
+
+    axios.post('/admin/hotels', formData)
         .then((response) => {
-            resetForm();
+            resetForm()
             // uploadImageRef.value.reset();
             window.dispatchEvent(new Event('resetChildComponent'));
             notify();
@@ -92,16 +104,16 @@ const remove = (index) => {
         <div class="container-fluid">
             <form @submit.prevent="" enctype="multipart/form-data">
                 <div class="row d-flex">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
                                 <p id="form-sub-title">
-                                    General
+                                    Details
                                 </p>
                                 <div class="card-text">
                                     <div class="form-group">
                                         <label for="name">
-                                            Name:
+                                            Hotel Name:
                                         </label>
                                         <input type="name" v-model="form.name" class="form-control" placeholder="Enter name"
                                             id="name" name="name">
@@ -132,6 +144,125 @@ const remove = (index) => {
                                     </div>
 
                                     <div class="form-group">
+                                        <label for="address">
+                                            Address:
+                                        </label>
+                                        <input type="address" v-model="form.address" class="form-control" placeholder="Enter address"
+                                            id="address" name="address">
+                                        <div>
+                                            <span class="help is-danger" v-text="get('address')"></span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row">
+
+                                        <div class="form-group col-md-6">
+                                            <label for="city">
+                                                City:
+                                            </label>
+                                            <input type="city" v-model="form.city" class="form-control" placeholder="Enter city"
+                                                id="city" name="city">
+                                            <div>
+                                                <span class="help is-danger" v-text="get('city')"></span>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label for="state">
+                                                State:
+                                            </label>
+                                            <input type="state" v-model="form.state" class="form-control" placeholder="Enter state"
+                                                id="state" name="state">
+                                            <div>
+                                                <span class="help is-danger" v-text="get('state')"></span>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row">
+
+                                        <div class="form-group col-md-6">
+                                            <label for="country">
+                                                Country:
+                                            </label>
+                                            <input type="country" v-model="form.country" class="form-control" placeholder="Enter country"
+                                                id="country" name="country">
+                                            <div>
+                                                <span class="help is-danger" v-text="get('country')"></span>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label for="state">
+                                                Postal Code:
+                                            </label>
+                                            <input type="postal_code" v-model="form.postal_code" class="form-control" placeholder="Enter postal_code"
+                                                id="postal_code" name="postal_code">
+                                            <div>
+                                                <span class="help is-danger" v-text="get('postal_code')"></span>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div>
+                                        <div class="form-group">
+                                            <label for="phone_number">
+                                                Phone Number:
+                                            </label>
+                                            <input type="phone_number" v-model="form.phone_number" class="form-control" placeholder="Enter phone number"
+                                                id="phone_number" name="phone_number">
+                                            <div>
+                                                <span class="help is-danger" v-text="get('phone_number')"></span>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="website_url">
+                                                Website URL:
+                                            </label>
+                                            <input type="website_url" v-model="form.website_url" class="form-control" placeholder="Enter website url"
+                                                id="website_url" name="website_url">
+                                            <div>
+                                                <span class="help is-danger" v-text="get('website_url')"></span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                     <div class="form-group">
+                                        <label for="registration_no">
+                                           Registrtion Number:
+                                        </label>
+                                        <input type="registration_no" v-model="form.registration_no" class="form-control" placeholder="Enter Registration Number"
+                                            id="registration_no" name="registration_no">
+                                        <div>
+                                            <span class="help is-danger" v-text="get('registration_no')"></span>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label for="chain_name">
+                                            Hotel Brand/Chain Name:
+                                        </label>
+                                        <input type="chain_name" v-model="form.chain_name" class="form-control" placeholder="Enter Brand/Chain Name"
+                                            id="chain_name" name="chain_name">
+                                        <div>
+                                            <span class="help is-danger" v-text="get('chain_name')"></span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group">
                                         <label for="policies">Hotel Policies</label>
                                         <textarea v-model="form.policies" :maxlength="max" class="form-control"
                                             id="policies" rows="3" name="policies"
@@ -143,68 +274,85 @@ const remove = (index) => {
 
                                     </div>
 
-
                                     <div class="form-group">
-                                        <label for="check_in_from">
-                                            Check In From:
-                                        </label>
-                                        <input  v-model="form.check_in_from" class="form-control" placeholder="Enter check_in_from"
-                                            id="check_in_from" name="check_in_from">
+                                        <label for="cancellation_policies">Cancellation Policies</label>
+                                        <textarea v-model="form.cancellation_policies" :maxlength="max" class="form-control"
+                                            id="cancellation_policies" rows="3" name="cancellation_policies"
+                                            placeholder="Enter cancellation policies"></textarea>
+                                        <span class="message-counter">{{ form.policies.length }}/{{ max }}</span>
                                         <div>
-                                            <span class="help is-danger" v-text="get('check_in_from')"></span>
+                                            <span class="help is-danger" v-text="get('policies')"></span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <label for="check_in_from">Check-In From:</label>
+                                            <input
+                                                type="time"
+                                                v-model="form.check_in_from"
+                                                class="form-control"
+                                                id="check_in_from"
+                                                name="check_in_from"
+                                            />
+                                            <div>
+                                                <span class="help is-danger" v-text="get('check_in_from')"></span>
+                                            </div>
+                                        </div>
+
+
+                                       <div class="form-group col-md-6">
+                                            <label for="check_in_until">Check-In Until:</label>
+                                            <input
+                                                type="time"
+                                                v-model="form.check_in_until"
+                                                class="form-control"
+                                                id="check_in_until"
+                                                name="check_in_until"
+                                            />
+                                            <div>
+                                                <span class="help is-danger" v-text="get('check_in_until')"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row">
+
+                                        <div class="form-group col-md-6">
+                                            <label for="check_out_from">Check-Out From:</label>
+                                            <input
+                                                type="time"
+                                                v-model="form.check_out_from"
+                                                class="form-control"
+                                                id="check_out_from"
+                                                name="check_out_from"
+                                            />
+                                            <div>
+                                                <span class="help is-danger" v-text="get('check_out_from')"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label for="check_out_until">Check-Out Until:</label>
+                                            <input
+                                                type="time"
+                                                v-model="form.check_out_until"
+                                                class="form-control"
+                                                id="check_out_until"
+                                                name="check_out_until"
+                                            />
+                                            <div>
+                                                <span class="help is-danger" v-text="get('check_out_until')"></span>
+                                            </div>
                                         </div>
 
                                     </div>
 
 
-                                    <div class="form-group">
-                                        <label for="check_out_from">
-                                            Check In From:
-                                        </label>
-                                        <input  v-model="form.check_out_from" class="form-control" placeholder="Enter check_out_from"
-                                            id="check_out_from" name="check_out_from">
-                                        <div>
-                                            <span class="help is-danger" v-text="get('check_out_from')"></span>
-                                        </div>
-
-                                    </div>
 
 
-                                    <div class="form-group">
-                                        <label for="check_in_until">
-                                            Check In From:
-                                        </label>
-                                        <input  v-model="form.check_in_until" class="form-control" placeholder="Enter check_in_until"
-                                            id="check_in_until" name="check_in_until">
-                                        <div>
-                                            <span class="help is-danger" v-text="get('check_in_until')"></span>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="check_out_until">
-                                            Check In From:
-                                        </label>
-                                        <input  v-model="form.check_out_until" class="form-control" placeholder="Enter check_out_until"
-                                            id="check_out_until" name="check_out_until">
-                                        <div>
-                                            <span class="help is-danger" v-text="get('check_out_until')"></span>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="receptional_open_until">
-                                            Reception open until:
-                                        </label>
-                                        <input  v-model="form.receptional_open_until" class="form-control" placeholder="Enter receptional_open_until"
-                                            id="receptional_open_until" name="receptional_open_until">
-                                        <div>
-                                            <span class="help is-danger" v-text="get('receptional_open_until')"></span>
-                                        </div>
-
-                                    </div>
 
                                 </div>
                             </div>
@@ -258,6 +406,7 @@ const remove = (index) => {
                     <div class="col-md-12  text-right">
                         <button type="button" class="btn btn-primary" @click="resetForm()">Cancel</button>
                         <button type="button" @click="submitForm" class="btn btn-warning ml-2">Save</button>
+
                     </div>
                 </div>
             </form>
