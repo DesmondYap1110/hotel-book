@@ -38,7 +38,7 @@ Route::middleware(['auth'])->group(function(){
 
         Route::get('/dashboard',[DashBoardController::class,'index'])->name('dashboard');
 
-        Route::resource('hotels', HotelController::class)->only(['index','create','edit', 'update','destroy']);
+        Route::resource('hotels', HotelController::class)->only(['index','create','store','edit', 'update','destroy']);
 
         Route::resource('rooms', RoomController::class)->only(['index','create','store','edit', 'update','destroy']);
 

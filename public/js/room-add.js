@@ -351,26 +351,31 @@ __webpack_require__.r(__webpack_exports__);
       get = _useErrors.get,
       record = _useErrors.record,
       clear = _useErrors.clear;
+    var max = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)(1000);
     var uploadedImages = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)([]);
     var form = (0,vue__WEBPACK_IMPORTED_MODULE_2__.reactive)({
       name: '',
-      quantity: '',
       description: '',
+      address: '',
+      city: '',
+      state: '',
+      country: '',
+      postal_code: '',
+      phone_number: '',
+      website_url: '',
+      chain_name: '',
       policies: '',
+      cancellation_policies: '',
       check_in_from: '',
-      check_out_from: '',
       check_in_until: '',
+      check_out_from: '',
       check_out_until: '',
-      receptional_open_until: '',
-      landmarkDistancePairs: [{
-        landmark: '',
-        distance: ''
-      }]
+      registration_no: ''
     });
     var resetForm = function resetForm() {
-      form.name = '';
-      form.quantity = '';
-      form.description = '';
+      Object.keys(form).forEach(function (key) {
+        form[key] = '';
+      });
       uploadedImages.value = [];
       // Clear all errors
       Object.keys(errors).forEach(function (field) {
@@ -378,13 +383,19 @@ __webpack_require__.r(__webpack_exports__);
       });
     };
     var submitForm = function submitForm() {
+      Object.keys(errors).forEach(function (field) {
+        return clear(field);
+      });
       var formData = new FormData();
       var index = 0; // Initialize the index
 
+      for (var key in form) {
+        formData.append(key, form[key]);
+      }
       uploadedImages.value.forEach(function (image, index) {
         formData.append("images[".concat(index, "]"), image);
       });
-      axios.post('/api/hotels', formData).then(function (response) {
+      axios.post('/admin/hotels', formData).then(function (response) {
         resetForm();
         // uploadImageRef.value.reset();
         window.dispatchEvent(new Event('resetChildComponent'));
@@ -408,6 +419,7 @@ __webpack_require__.r(__webpack_exports__);
       get: get,
       record: record,
       clear: clear,
+      max: max,
       uploadedImages: uploadedImages,
       form: form,
       resetForm: resetForm,
@@ -1682,7 +1694,7 @@ var _hoisted_4 = {
   "class": "row d-flex"
 };
 var _hoisted_5 = {
-  "class": "col-md-6"
+  "class": "col-md-12"
 };
 var _hoisted_6 = {
   "class": "card"
@@ -1692,7 +1704,7 @@ var _hoisted_7 = {
 };
 var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
   id: "form-sub-title"
-}, " General ", -1 /* HOISTED */);
+}, " Details ", -1 /* HOISTED */);
 var _hoisted_9 = {
   "class": "card-text"
 };
@@ -1701,7 +1713,7 @@ var _hoisted_10 = {
 };
 var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
   "for": "name"
-}, " Name: ", -1 /* HOISTED */);
+}, " Hotel Name: ", -1 /* HOISTED */);
 var _hoisted_12 = ["textContent"];
 var _hoisted_13 = {
   "class": "form-group"
@@ -1718,57 +1730,136 @@ var _hoisted_18 = {
   "class": "form-group"
 };
 var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "for": "policies"
-}, "Hotel Policies", -1 /* HOISTED */);
-var _hoisted_20 = ["maxlength"];
+  "for": "address"
+}, " Address: ", -1 /* HOISTED */);
+var _hoisted_20 = ["textContent"];
 var _hoisted_21 = {
-  "class": "message-counter"
+  "class": "row"
 };
-var _hoisted_22 = ["textContent"];
-var _hoisted_23 = {
-  "class": "form-group"
+var _hoisted_22 = {
+  "class": "form-group col-md-6"
 };
-var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "for": "check_in_from"
-}, " Check In From: ", -1 /* HOISTED */);
-var _hoisted_25 = ["textContent"];
-var _hoisted_26 = {
-  "class": "form-group"
+var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "city"
+}, " City: ", -1 /* HOISTED */);
+var _hoisted_24 = ["textContent"];
+var _hoisted_25 = {
+  "class": "form-group col-md-6"
 };
-var _hoisted_27 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "for": "check_out_from"
-}, " Check In From: ", -1 /* HOISTED */);
-var _hoisted_28 = ["textContent"];
+var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "state"
+}, " State: ", -1 /* HOISTED */);
+var _hoisted_27 = ["textContent"];
+var _hoisted_28 = {
+  "class": "row"
+};
 var _hoisted_29 = {
-  "class": "form-group"
+  "class": "form-group col-md-6"
 };
 var _hoisted_30 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "for": "check_in_until"
-}, " Check In From: ", -1 /* HOISTED */);
+  "for": "country"
+}, " Country: ", -1 /* HOISTED */);
 var _hoisted_31 = ["textContent"];
 var _hoisted_32 = {
-  "class": "form-group"
+  "class": "form-group col-md-6"
 };
 var _hoisted_33 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "for": "check_out_until"
-}, " Check In From: ", -1 /* HOISTED */);
+  "for": "state"
+}, " Postal Code: ", -1 /* HOISTED */);
 var _hoisted_34 = ["textContent"];
 var _hoisted_35 = {
   "class": "form-group"
 };
 var _hoisted_36 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "for": "receptional_open_until"
-}, " Reception open until: ", -1 /* HOISTED */);
+  "for": "phone_number"
+}, " Phone Number: ", -1 /* HOISTED */);
 var _hoisted_37 = ["textContent"];
 var _hoisted_38 = {
+  "class": "form-group"
+};
+var _hoisted_39 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "website_url"
+}, " Website URL: ", -1 /* HOISTED */);
+var _hoisted_40 = ["textContent"];
+var _hoisted_41 = {
+  "class": "form-group"
+};
+var _hoisted_42 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "registration_no"
+}, " Registrtion Number: ", -1 /* HOISTED */);
+var _hoisted_43 = ["textContent"];
+var _hoisted_44 = {
+  "class": "form-group"
+};
+var _hoisted_45 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "chain_name"
+}, " Hotel Brand/Chain Name: ", -1 /* HOISTED */);
+var _hoisted_46 = ["textContent"];
+var _hoisted_47 = {
+  "class": "form-group"
+};
+var _hoisted_48 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "policies"
+}, "Hotel Policies", -1 /* HOISTED */);
+var _hoisted_49 = ["maxlength"];
+var _hoisted_50 = {
+  "class": "message-counter"
+};
+var _hoisted_51 = ["textContent"];
+var _hoisted_52 = {
+  "class": "form-group"
+};
+var _hoisted_53 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "cancellation_policies"
+}, "Cancellation Policies", -1 /* HOISTED */);
+var _hoisted_54 = ["maxlength"];
+var _hoisted_55 = {
+  "class": "message-counter"
+};
+var _hoisted_56 = ["textContent"];
+var _hoisted_57 = {
   "class": "row"
 };
-var _hoisted_39 = {
+var _hoisted_58 = {
+  "class": "form-group col-md-6"
+};
+var _hoisted_59 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "check_in_from"
+}, "Check-In From:", -1 /* HOISTED */);
+var _hoisted_60 = ["textContent"];
+var _hoisted_61 = {
+  "class": "form-group col-md-6"
+};
+var _hoisted_62 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "check_in_until"
+}, "Check-In Until:", -1 /* HOISTED */);
+var _hoisted_63 = ["textContent"];
+var _hoisted_64 = {
+  "class": "row"
+};
+var _hoisted_65 = {
+  "class": "form-group col-md-6"
+};
+var _hoisted_66 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "check_out_from"
+}, "Check-Out From:", -1 /* HOISTED */);
+var _hoisted_67 = ["textContent"];
+var _hoisted_68 = {
+  "class": "form-group col-md-6"
+};
+var _hoisted_69 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "check_out_until"
+}, "Check-Out Until:", -1 /* HOISTED */);
+var _hoisted_70 = ["textContent"];
+var _hoisted_71 = {
+  "class": "row"
+};
+var _hoisted_72 = {
   "class": "col-md-12 text-right"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
-    onSubmit: _cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {}, ["prevent"])),
+    onSubmit: _cache[19] || (_cache[19] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {}, ["prevent"])),
     enctype: "multipart/form-data"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [_hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "name",
@@ -1782,7 +1873,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.name]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
     "class": "help is-danger",
     textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('name'))
-  }, null, 8 /* PROPS */, _hoisted_12)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <vue-multi-image-upload @data-image=\"images\" :max=\"10\" :data-reset=\"component\"\r\n                                        :options=\"options\" :image-size=\"imageSize\" :image-format=\"formatType\" /> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["uploadImage"], {
+  }, null, 8 /* PROPS */, _hoisted_12)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <vue-multi-image-upload @data-image=\"images\" :max=\"10\" :data-reset=\"component\"\n                                        :options=\"options\" :image-size=\"imageSize\" :image-format=\"formatType\" /> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["uploadImage"], {
     ref: "uploadImageRef",
     uploadedImages: $setup.uploadedImages,
     "onUpdate:uploadedImages": _cache[1] || (_cache[1] = function ($event) {
@@ -1792,87 +1883,197 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
       return $setup.form.description = $event;
     }),
-    maxlength: _ctx.max,
+    maxlength: $setup.max,
     "class": "form-control",
     id: "description",
     rows: "3",
     name: "description",
     placeholder: "Enter description"
-  }, null, 8 /* PROPS */, _hoisted_15), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.description]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.form.description.length) + "/" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.max), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+  }, null, 8 /* PROPS */, _hoisted_15), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.description]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.form.description.length) + "/" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.max), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
     "class": "help is-danger",
     textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('description'))
-  }, null, 8 /* PROPS */, _hoisted_17)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [_hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
+  }, null, 8 /* PROPS */, _hoisted_17)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [_hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "address",
     "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
+      return $setup.form.address = $event;
+    }),
+    "class": "form-control",
+    placeholder: "Enter address",
+    id: "address",
+    name: "address"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.address]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "help is-danger",
+    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('address'))
+  }, null, 8 /* PROPS */, _hoisted_20)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [_hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "city",
+    "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+      return $setup.form.city = $event;
+    }),
+    "class": "form-control",
+    placeholder: "Enter city",
+    id: "city",
+    name: "city"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.city]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "help is-danger",
+    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('city'))
+  }, null, 8 /* PROPS */, _hoisted_24)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_25, [_hoisted_26, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "state",
+    "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
+      return $setup.form.state = $event;
+    }),
+    "class": "form-control",
+    placeholder: "Enter state",
+    id: "state",
+    name: "state"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.state]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "help is-danger",
+    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('state'))
+  }, null, 8 /* PROPS */, _hoisted_27)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_28, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_29, [_hoisted_30, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "country",
+    "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+      return $setup.form.country = $event;
+    }),
+    "class": "form-control",
+    placeholder: "Enter country",
+    id: "country",
+    name: "country"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.country]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "help is-danger",
+    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('country'))
+  }, null, 8 /* PROPS */, _hoisted_31)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [_hoisted_33, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "postal_code",
+    "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
+      return $setup.form.postal_code = $event;
+    }),
+    "class": "form-control",
+    placeholder: "Enter postal_code",
+    id: "postal_code",
+    name: "postal_code"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.postal_code]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "help is-danger",
+    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('postal_code'))
+  }, null, 8 /* PROPS */, _hoisted_34)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_35, [_hoisted_36, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "phone_number",
+    "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
+      return $setup.form.phone_number = $event;
+    }),
+    "class": "form-control",
+    placeholder: "Enter phone number",
+    id: "phone_number",
+    name: "phone_number"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.phone_number]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "help is-danger",
+    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('phone_number'))
+  }, null, 8 /* PROPS */, _hoisted_37)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_38, [_hoisted_39, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "website_url",
+    "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
+      return $setup.form.website_url = $event;
+    }),
+    "class": "form-control",
+    placeholder: "Enter website url",
+    id: "website_url",
+    name: "website_url"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.website_url]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "help is-danger",
+    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('website_url'))
+  }, null, 8 /* PROPS */, _hoisted_40)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_41, [_hoisted_42, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "registration_no",
+    "onUpdate:modelValue": _cache[10] || (_cache[10] = function ($event) {
+      return $setup.form.registration_no = $event;
+    }),
+    "class": "form-control",
+    placeholder: "Enter Registration Number",
+    id: "registration_no",
+    name: "registration_no"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.registration_no]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "help is-danger",
+    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('registration_no'))
+  }, null, 8 /* PROPS */, _hoisted_43)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_44, [_hoisted_45, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "chain_name",
+    "onUpdate:modelValue": _cache[11] || (_cache[11] = function ($event) {
+      return $setup.form.chain_name = $event;
+    }),
+    "class": "form-control",
+    placeholder: "Enter Brand/Chain Name",
+    id: "chain_name",
+    name: "chain_name"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.chain_name]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "help is-danger",
+    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('chain_name'))
+  }, null, 8 /* PROPS */, _hoisted_46)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_47, [_hoisted_48, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
+    "onUpdate:modelValue": _cache[12] || (_cache[12] = function ($event) {
       return $setup.form.policies = $event;
     }),
-    maxlength: _ctx.max,
+    maxlength: $setup.max,
     "class": "form-control",
     id: "policies",
     rows: "3",
     name: "policies",
     placeholder: "Enter policies"
-  }, null, 8 /* PROPS */, _hoisted_20), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.policies]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.form.policies.length) + "/" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.max), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+  }, null, 8 /* PROPS */, _hoisted_49), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.policies]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_50, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.form.policies.length) + "/" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.max), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
     "class": "help is-danger",
     textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('policies'))
-  }, null, 8 /* PROPS */, _hoisted_22)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [_hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-    "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+  }, null, 8 /* PROPS */, _hoisted_51)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_52, [_hoisted_53, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
+    "onUpdate:modelValue": _cache[13] || (_cache[13] = function ($event) {
+      return $setup.form.cancellation_policies = $event;
+    }),
+    maxlength: $setup.max,
+    "class": "form-control",
+    id: "cancellation_policies",
+    rows: "3",
+    name: "cancellation_policies",
+    placeholder: "Enter cancellation policies"
+  }, null, 8 /* PROPS */, _hoisted_54), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.cancellation_policies]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_55, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.form.policies.length) + "/" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.max), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "help is-danger",
+    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('policies'))
+  }, null, 8 /* PROPS */, _hoisted_56)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_57, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_58, [_hoisted_59, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "time",
+    "onUpdate:modelValue": _cache[14] || (_cache[14] = function ($event) {
       return $setup.form.check_in_from = $event;
     }),
     "class": "form-control",
-    placeholder: "Enter check_in_from",
     id: "check_in_from",
     name: "check_in_from"
   }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.check_in_from]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
     "class": "help is-danger",
     textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('check_in_from'))
-  }, null, 8 /* PROPS */, _hoisted_25)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [_hoisted_27, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-    "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
-      return $setup.form.check_out_from = $event;
-    }),
-    "class": "form-control",
-    placeholder: "Enter check_out_from",
-    id: "check_out_from",
-    name: "check_out_from"
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.check_out_from]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
-    "class": "help is-danger",
-    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('check_out_from'))
-  }, null, 8 /* PROPS */, _hoisted_28)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_29, [_hoisted_30, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-    "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+  }, null, 8 /* PROPS */, _hoisted_60)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_61, [_hoisted_62, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "time",
+    "onUpdate:modelValue": _cache[15] || (_cache[15] = function ($event) {
       return $setup.form.check_in_until = $event;
     }),
     "class": "form-control",
-    placeholder: "Enter check_in_until",
     id: "check_in_until",
     name: "check_in_until"
   }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.check_in_until]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
     "class": "help is-danger",
     textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('check_in_until'))
-  }, null, 8 /* PROPS */, _hoisted_31)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [_hoisted_33, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-    "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
+  }, null, 8 /* PROPS */, _hoisted_63)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_64, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_65, [_hoisted_66, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "time",
+    "onUpdate:modelValue": _cache[16] || (_cache[16] = function ($event) {
+      return $setup.form.check_out_from = $event;
+    }),
+    "class": "form-control",
+    id: "check_out_from",
+    name: "check_out_from"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.check_out_from]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "help is-danger",
+    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('check_out_from'))
+  }, null, 8 /* PROPS */, _hoisted_67)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_68, [_hoisted_69, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "time",
+    "onUpdate:modelValue": _cache[17] || (_cache[17] = function ($event) {
       return $setup.form.check_out_until = $event;
     }),
     "class": "form-control",
-    placeholder: "Enter check_out_until",
     id: "check_out_until",
     name: "check_out_until"
   }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.check_out_until]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
     "class": "help is-danger",
     textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('check_out_until'))
-  }, null, 8 /* PROPS */, _hoisted_34)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_35, [_hoisted_36, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-    "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
-      return $setup.form.receptional_open_until = $event;
-    }),
-    "class": "form-control",
-    placeholder: "Enter receptional_open_until",
-    id: "receptional_open_until",
-    name: "receptional_open_until"
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.receptional_open_until]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
-    "class": "help is-danger",
-    textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.get('receptional_open_until'))
-  }, null, 8 /* PROPS */, _hoisted_37)])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div class=\"col-md-6\">\r\n                        <div class=\"card\">\r\n                            <div class=\"card-body\">\r\n                                <p id=\"form-sub-title\">\r\n                                    Landmark\r\n                                </p>\r\n                                <div class=\"card-text\">\r\n                                    <div class=\"form-group row\">\r\n                                        <div class=\"col-md-6\" v-for=\"(item, index) in form.landmarkDistancePairs\" :key=\"index\">\r\n                                            <div class=\"form-group row\">\r\n                                                <div class=\"col-md-6\">\r\n                                                    <label :for=\"'landmark' + index\">Landmark:</label>\r\n                                                    <input type=\"text\" v-model=\"item.landmark\" class=\"form-control\" :placeholder=\"'Enter landmark ' + (index + 1)\" :id=\"'landmark' + index\" :name=\"'landmark' + index\">\r\n                                                    <div>\r\n                                                        <span class=\"help is-danger\" v-text=\"get('landmark.'+ index)\"></span>\r\n                                                    </div>\r\n                                                </div>\r\n                                                <div class=\"col-md-6\">\r\n                                                    <label :for=\"'distance' + index\">Distance:</label>\r\n                                                    <input type=\"text\" v-model=\"item.distance\" class=\"form-control\" :placeholder=\"'Enter distance ' + (index + 1)\" :id=\"'distance' + index\" :name=\"'distance' + index\">\r\n                                                    <div>\r\n                                                        <span class=\"help is-danger\" v-text=\"get('distance.' + index)\"></span>\r\n                                                    </div>\r\n                                                </div>\r\n                                                <div class=\"col-md-1\">\r\n                                                    <button @click=\"remove(index)\" class=\"btn btn-danger\" :disabled=\"index === 0\">Remove</button>\r\n                                                </div>\r\n                                            </div>\r\n                                        </div>\r\n\r\n                                    </div>\r\n                                    <button @click=\"addMore\" class=\"btn btn-primary\">Add More</button>\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n\r\n                    </div> ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_38, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_39, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }, null, 8 /* PROPS */, _hoisted_70)])])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div class=\"col-md-6\">\n                        <div class=\"card\">\n                            <div class=\"card-body\">\n                                <p id=\"form-sub-title\">\n                                    Landmark\n                                </p>\n                                <div class=\"card-text\">\n                                    <div class=\"form-group row\">\n                                        <div class=\"col-md-6\" v-for=\"(item, index) in form.landmarkDistancePairs\" :key=\"index\">\n                                            <div class=\"form-group row\">\n                                                <div class=\"col-md-6\">\n                                                    <label :for=\"'landmark' + index\">Landmark:</label>\n                                                    <input type=\"text\" v-model=\"item.landmark\" class=\"form-control\" :placeholder=\"'Enter landmark ' + (index + 1)\" :id=\"'landmark' + index\" :name=\"'landmark' + index\">\n                                                    <div>\n                                                        <span class=\"help is-danger\" v-text=\"get('landmark.'+ index)\"></span>\n                                                    </div>\n                                                </div>\n                                                <div class=\"col-md-6\">\n                                                    <label :for=\"'distance' + index\">Distance:</label>\n                                                    <input type=\"text\" v-model=\"item.distance\" class=\"form-control\" :placeholder=\"'Enter distance ' + (index + 1)\" :id=\"'distance' + index\" :name=\"'distance' + index\">\n                                                    <div>\n                                                        <span class=\"help is-danger\" v-text=\"get('distance.' + index)\"></span>\n                                                    </div>\n                                                </div>\n                                                <div class=\"col-md-1\">\n                                                    <button @click=\"remove(index)\" class=\"btn btn-danger\" :disabled=\"index === 0\">Remove</button>\n                                                </div>\n                                            </div>\n                                        </div>\n\n                                    </div>\n                                    <button @click=\"addMore\" class=\"btn btn-primary\">Add More</button>\n                                </div>\n                            </div>\n                        </div>\n\n                    </div> ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_71, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_72, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     type: "button",
     "class": "btn btn-primary",
-    onClick: _cache[9] || (_cache[9] = function ($event) {
+    onClick: _cache[18] || (_cache[18] = function ($event) {
       return $setup.resetForm();
     })
   }, "Cancel"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
@@ -3564,7 +3765,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.image-hotel {\r\n    width: 100px;\r\n    height: 100px;\n}\nhtml * {\r\n    box-sizing: border-box;\n}\np {\r\n    margin: 0;\n}\n.upload__box {\r\n    padding: 40px;\n}\n.upload__inputfile {\r\n    width: .1px;\r\n    height: .1px;\r\n    opacity: 0;\r\n    overflow: hidden;\r\n    position: absolute;\r\n    z-index: -1;\n}\n.upload__btn {\r\n    display: inline-block;\r\n    font-weight: 600;\r\n    color: #fff;\r\n    text-align: center;\r\n    min-width: 116px;\r\n    padding: 5px;\r\n    transition: all .3s ease;\r\n    cursor: pointer;\r\n    border: 2px solid;\r\n    background-color: #4045ba;\r\n    border-color: #4045ba;\r\n    border-radius: 10px;\r\n    line-height: 26px;\r\n    font-size: 14px;\n}\n.upload__btn:hover {\r\n    background-color: unset;\r\n    color: #4045ba;\r\n    transition: all .3s ease;\n}\n.upload__btn-box {\r\n    margin-bottom: 10px;\n}\n.upload__img-wrap {\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    margin: 0 -10px;\n}\n.upload__img-box {\r\n    width: 150px;\r\n    padding: 0 10px;\r\n    margin-bottom: 12px;\n}\n.upload__img-close {\r\n    width: 24px;\r\n    height: 24px;\r\n    border-radius: 50%;\r\n    background-color: rgba(0, 0, 0, 0.5);\r\n    position: absolute;\r\n    top: 10px;\r\n    right: 10px;\r\n    text-align: center;\r\n    line-height: 24px;\r\n    z-index: 1;\r\n    cursor: pointer;\n}\n.upload__img-close:after {\r\n    content: '\\2716';\r\n    font-size: 14px;\r\n    color: white;\n}\n.img-bg {\r\n    background-repeat: no-repeat;\r\n    background-position: center;\r\n    background-size: cover;\r\n    position: relative;\r\n    padding-bottom: 100%;\n}\n#form-sub-title {\r\n    font-size: 18px;\r\n    font-weight: 600;\r\n    line-height: 1.4;\r\n    margin-bottom: 15px;\r\n    color: #1896bd;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.image-hotel {\n    width: 100px;\n    height: 100px;\n}\nhtml * {\n    box-sizing: border-box;\n}\np {\n    margin: 0;\n}\n.upload__box {\n    padding: 40px;\n}\n.upload__inputfile {\n    width: .1px;\n    height: .1px;\n    opacity: 0;\n    overflow: hidden;\n    position: absolute;\n    z-index: -1;\n}\n.upload__btn {\n    display: inline-block;\n    font-weight: 600;\n    color: #fff;\n    text-align: center;\n    min-width: 116px;\n    padding: 5px;\n    transition: all .3s ease;\n    cursor: pointer;\n    border: 2px solid;\n    background-color: #4045ba;\n    border-color: #4045ba;\n    border-radius: 10px;\n    line-height: 26px;\n    font-size: 14px;\n}\n.upload__btn:hover {\n    background-color: unset;\n    color: #4045ba;\n    transition: all .3s ease;\n}\n.upload__btn-box {\n    margin-bottom: 10px;\n}\n.upload__img-wrap {\n    display: flex;\n    flex-wrap: wrap;\n    margin: 0 -10px;\n}\n.upload__img-box {\n    width: 150px;\n    padding: 0 10px;\n    margin-bottom: 12px;\n}\n.upload__img-close {\n    width: 24px;\n    height: 24px;\n    border-radius: 50%;\n    background-color: rgba(0, 0, 0, 0.5);\n    position: absolute;\n    top: 10px;\n    right: 10px;\n    text-align: center;\n    line-height: 24px;\n    z-index: 1;\n    cursor: pointer;\n}\n.upload__img-close:after {\n    content: '\\2716';\n    font-size: 14px;\n    color: white;\n}\n.img-bg {\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: cover;\n    position: relative;\n    padding-bottom: 100%;\n}\n#form-sub-title {\n    font-size: 18px;\n    font-weight: 600;\n    line-height: 1.4;\n    margin-bottom: 15px;\n    color: #1896bd;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -3588,7 +3789,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.active {\r\n    background-color: #007bff;\r\n    color: #fff;\n}\r\n\r\n  /* Additional styling for button appearance */\nbutton {\r\n    border: 1px solid #ccc;\r\n    padding: 8px 16px;\r\n    margin: 4px;\r\n    cursor: pointer;\r\n    background-color: #fff;\r\n    color: #333;\r\n    transition: background-color 0.3s ease, color 0.3s ease;\n}\nbutton:hover {\r\n    background-color: #f0f0f0;\n}\n.room-box {\r\n    display: inline-block;\r\n    padding: 8px;\r\n    margin: 4px;\r\n    background-color: #f0f0f0;\r\n    border: 1px solid #ccc;\r\n    border-radius: 4px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.active {\n    background-color: #007bff;\n    color: #fff;\n}\n\n  /* Additional styling for button appearance */\nbutton {\n    border: 1px solid #ccc;\n    padding: 8px 16px;\n    margin: 4px;\n    cursor: pointer;\n    background-color: #fff;\n    color: #333;\n    transition: background-color 0.3s ease, color 0.3s ease;\n}\nbutton:hover {\n    background-color: #f0f0f0;\n}\n.room-box {\n    display: inline-block;\n    padding: 8px;\n    margin: 4px;\n    background-color: #f0f0f0;\n    border: 1px solid #ccc;\n    border-radius: 4px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
