@@ -121,6 +121,7 @@ Done. 🎉
 | `->center()` / `->right()`    | alignment                                         |
 | `->width('120px')`            | fixed width                                       |
 | `->image()`                   | value is an image URL                             |
+| `->avatar()`                  | value is an image URL, shown as a small circle    |
 | `->badge()`                   | value is `$this->badge('Label', 'success')` or an array of badges |
 | `->actions()`                 | value is `$this->actions()->...`                  |
 | `->html()`                    | value is HTML – **escape user data with `e()`**   |

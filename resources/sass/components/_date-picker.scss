@@ -1,0 +1,98 @@
+// DATE / TIME PICKER  -  Vue: <ui-date-picker> (Flatpickr), themed to the brand.
+@use '../abstracts/functions' as f;
+
+// ---- the input ----
+.cl-picker {
+  position: relative;
+
+  .cl-picker__input { padding-right: 64px; cursor: pointer; }
+  .cl-picker__input[readonly] { background: f.color('field'); }
+
+  &__icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: f.color('muted');
+    pointer-events: none;
+  }
+
+  &__clear {
+    position: absolute;
+    right: 34px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 2px 6px;
+    border: 0;
+    background: transparent;
+    color: f.color('muted');
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover { color: f.color('danger'); }
+  }
+
+  &.is-invalid .cl-picker__input { box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.4); }
+}
+
+// inside admin form sections inputs are 40px high (see _form.scss)
+.cl-form-section .cl-picker .cl-picker__input { height: 40px; font-size: 13.5px; border-radius: 8px; }
+
+// ---- the popup calendar (appended to <body>) ----
+.flatpickr-calendar {
+  font-family: var(--font-body);
+  border: 0;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(29, 16, 48, 0.18);
+
+  &.arrowTop::before, &.arrowTop::after { display: none; }
+
+  .flatpickr-months { padding: 4px 0; }
+  .flatpickr-current-month { font-size: 14px; }
+  .flatpickr-months .flatpickr-prev-month:hover svg,
+  .flatpickr-months .flatpickr-next-month:hover svg { fill: var(--color-primary); }
+
+  .flatpickr-day {
+    border-radius: 8px;
+
+    &:hover { background: rgba(var(--color-primary-rgb), 0.08); border-color: transparent; }
+    &.today { border-color: var(--color-primary); }
+
+    &.selected, &.startRange, &.endRange,
+    &.selected:hover, &.startRange:hover, &.endRange:hover {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+
+    &.inRange {
+      background: rgba(var(--color-primary-rgb), 0.1);
+      border-color: transparent;
+      box-shadow: -5px 0 0 rgba(var(--color-primary-rgb), 0.1), 5px 0 0 rgba(var(--color-primary-rgb), 0.1);
+    }
+  }
+
+  // time picker
+  .flatpickr-time {
+    height: 48px;
+    max-height: 48px;
+    line-height: 48px;
+
+    input, .flatpickr-am-pm { font-size: 16px; font-weight: 600; color: f.color('ink'); }
+    input:hover, input:focus, .flatpickr-am-pm:hover, .flatpickr-am-pm:focus { background: rgba(var(--color-primary-rgb), 0.06); }
+    .numInputWrapper span.arrowUp::after { border-bottom-color: var(--color-primary); }
+    .numInputWrapper span.arrowDown::after { border-top-color: var(--color-primary); }
+  }
+
+  &.noCalendar.hasTime .flatpickr-time { border-top: 0; }
+}
+
+// compact version inside the table filter bar
+.cl-table-filters__date {
+  margin: 0;
+  .cl-picker__input { height: 30px; font-size: 13px; border: 1px solid f.color('border'); border-radius: 6px; background: f.color('surface'); }
+}
+
+// highlighted number in the time picker: brand tint instead of the browser's blue
+.flatpickr-calendar .flatpickr-time input::selection { background: rgba(var(--color-primary-rgb), 0.25); color: inherit; }
+.flatpickr-calendar.noCalendar { width: 240px; }

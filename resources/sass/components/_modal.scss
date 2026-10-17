@@ -1,0 +1,82 @@
+// MODAL  -  Vue: <ui-modal v-model="open" title="...">
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+body.cl-modal-open { overflow: hidden; }
+
+.cl-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1060;   // above the sidebar and the page loader's content
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 8vh f.space(4) f.space(4);
+  overflow-y: auto;
+  background: rgba(29, 16, 48, 0.55);
+  backdrop-filter: blur(2px);
+
+  &__dialog {
+    width: 100%;
+    max-width: 560px;
+    background: f.color('surface');
+    border-radius: 12px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+    font-family: var(--font-body);
+
+    &:focus { outline: none; }
+
+    &--sm { max-width: 420px; }
+    &--lg { max-width: 760px; }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: f.space(4) f.space(5);
+    border-bottom: 1px dashed f.color('border');
+  }
+
+  &__title { margin: 0; font-size: 16px; font-weight: 700; color: f.color('ink'); }
+
+  &__close {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: f.color('muted');
+    cursor: pointer;
+
+    &:hover { background: f.color('page'); color: var(--color-primary); }
+  }
+
+  &__body { padding: f.space(5); }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: f.space(2);
+    padding: f.space(3) f.space(5) f.space(4);
+    border-top: 1px dashed f.color('border');
+  }
+
+  @include m.respond-to('sm') {
+    align-items: flex-end;
+    padding: 0;
+
+    &__dialog { max-width: none !important; border-radius: 14px 14px 0 0; } // bottom sheet on phones
+  }
+}
+
+// open / close animation
+.cl-modal-enter-active, .cl-modal-leave-active { transition: opacity 0.2s ease; }
+.cl-modal-enter-active .cl-modal__dialog, .cl-modal-leave-active .cl-modal__dialog { transition: transform 0.2s ease; }
+.cl-modal-enter-from, .cl-modal-leave-to { opacity: 0; }
+.cl-modal-enter-from .cl-modal__dialog, .cl-modal-leave-to .cl-modal__dialog { transform: translateY(16px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-modal-enter-active, .cl-modal-leave-active,
+  .cl-modal-enter-active .cl-modal__dialog, .cl-modal-leave-active .cl-modal__dialog { transition: none; }
+}

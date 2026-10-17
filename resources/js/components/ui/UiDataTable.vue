@@ -266,7 +266,8 @@ const runAction = async (action) => {
             emit('deleted', action);
             if (isServer) fetchRows();
         } catch (e) {
-            toast.error('Could not delete. Please try again.', { theme: 'colored', position: toast.POSITION.BOTTOM_RIGHT });
+            // show the server's reason when it gives one (e.g. 'The headquarters still has branches')
+            toast.error(e.response?.data?.message || 'Could not delete. Please try again.', { theme: 'colored', position: toast.POSITION.BOTTOM_RIGHT, autoClose: 4000 });
         }
     }
 };

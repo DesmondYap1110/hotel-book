@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Support\RichText;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRoomTypesRequest extends FormRequest
@@ -16,6 +17,12 @@ class UpdateRoomTypesRequest extends FormRequest
         return true;
     }
 
+    /** Clean rich text (Summernote) before validation, so only safe HTML is saved. */
+    protected function prepareForValidation()
+    {
+        $this->merge(['description' => RichText::clean($this->input('description'))]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,7 +33,7 @@ class UpdateRoomTypesRequest extends FormRequest
         return [
             'name'=> ['required','unique:room_types,name,'.$this->room_type->id],
             'images'=> ['required'],
-            'description'=> ['required','max:1000'],
+            'description'=> ['required','max:5000'], // HTML from the rich text editor
             'max_adult'=> ['nullable','integer'],
             'max_child' => ['nullable','integer'],
             'selectedBeds'=>['required'],

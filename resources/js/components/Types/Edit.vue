@@ -1,5 +1,4 @@
 <script setup>
-import uploadImage from '../uploadImage.vue'
 import { toast} from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import { ref, reactive,onMounted } from 'vue';
@@ -311,14 +310,10 @@ p {
 
                                     </div>
 
-                                    <uploadImage ref="uploadImageRef" v-model:uploadedImages="uploadedImages"></uploadImage>
+                                    <ui-file-upload v-model="uploadedImages" mode="local" multiple />
 
                                     <div class="form-group">
-                                        <label for="description">Description</label>
-                                        <textarea v-model="form.description" :maxlength="max" class="form-control"
-                                            id="description" rows="3" name="description"
-                                            placeholder="Enter description"></textarea>
-                                        <span class="message-counter">{{ form.description.length }}/{{ max }}</span>
+                                        <ui-rich-editor v-model="form.description" label="Description" />
                                         <div>
                                             <span class="help is-danger" v-text="get('description')"></span>
                                         </div>

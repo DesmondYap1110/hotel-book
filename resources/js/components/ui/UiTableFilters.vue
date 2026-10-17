@@ -13,7 +13,10 @@
             <ui-select v-if="filter.type === 'select'" v-model="local[filter.name]"
                        :options="filter.options" placeholder="All" class="cl-table-filters__input" />
 
-            <input v-else :type="filter.type === 'date' ? 'date' : 'text'" v-model.trim="local[filter.name]"
+            <ui-date-picker v-else-if="filter.type === 'date'" v-model="local[filter.name]" mode="date"
+                            class="cl-table-filters__input cl-table-filters__date" />
+
+            <input v-else type="text" v-model.trim="local[filter.name]"
                    class="cl-table__search-input cl-table-filters__input">
         </label>
 
@@ -26,6 +29,7 @@
 <script setup>
 import { reactive, computed, watch } from 'vue';
 import UiSelect from './UiSelect.vue';
+import UiDatePicker from './UiDatePicker.vue';
 
 const props = defineProps({
     filters: { type: Array, default: () => [] },

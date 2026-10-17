@@ -43,7 +43,7 @@ const getRoomType = () =>{
                 </div>
                 <div>
                     <span>Description</span>
-                    <span>{{roomTypes.data.description}}</span>
+                    <div class="cl-rich-text" v-html="roomTypes.data.description"></div>
                 </div>
             </div>
         </div>

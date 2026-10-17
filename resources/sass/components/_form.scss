@@ -77,3 +77,368 @@ select.cl-input { padding-right: f.space(8); }
     accent-color: var(--color-primary);
   }
 }
+
+// ---- long forms: sections + 2-column grid (UiFormSection.vue) ----
+.cl-form-section {
+  padding: f.space(5) 0;
+  border-top: 1px dashed f.color('border');
+
+  &:first-child { border-top: 0; padding-top: 0; }
+
+  &__head { margin-bottom: f.space(4); }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: f.space(2);
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: f.color('ink');
+
+    i { color: var(--color-primary); font-size: 14px; }
+  }
+
+  &__desc { margin: 4px 0 0; font-size: 12.5px; color: f.color('muted'); }
+}
+
+.cl-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: f.space(5);
+
+  > .is-full { grid-column: 1 / -1; }
+
+  @include m.respond-to('md') { grid-template-columns: minmax(0, 1fr); }
+}
+
+// smaller inputs inside admin forms than on the login page
+.cl-form-section .cl-input { height: 40px; font-size: 13.5px; border-radius: 8px; }
+.cl-form-section .cl-field__label { font-size: 13px; }
+.cl-form-section .cl-field__action { top: 33px; }
+.cl-form-section .cl-field .cl-select__toggle { height: 40px; font-size: 13.5px; border-radius: 8px; }
+
+.cl-input--textarea {
+  height: auto !important;
+  min-height: 90px;
+  padding: 10px f.space(4);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.cl-field__hint { margin-top: 6px; font-size: 12px; color: f.color('muted'); }
+
+// ---- pick-many pills (UiCheckboxGroup.vue) ----
+.cl-check-group { display: flex; flex-wrap: wrap; gap: f.space(2); }
+
+.cl-check-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 6px 12px;
+  border: 1px solid f.color('border');
+  border-radius: 999px;
+  background: f.color('surface');
+  font-size: 12.5px;
+  font-weight: 500;
+  color: f.color('dark');
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+
+  input { position: absolute; opacity: 0; pointer-events: none; }
+
+  &__icon { display: none; font-size: 10px; }
+
+  &:hover { border-color: rgba(var(--color-primary-rgb), 0.5); }
+
+  &.is-checked {
+    border-color: var(--color-primary);
+    background: rgba(var(--color-primary-rgb), 0.08);
+    color: f.color('primary-dark');
+
+    .cl-check-pill__icon { display: inline; }
+  }
+
+  &:focus-within { @include m.focus-ring(0.25); }
+}
+
+// sticky save bar at the bottom of long forms
+.cl-form-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: flex-end;
+  gap: f.space(2);
+  margin: f.space(4) -15px -24px;
+  padding: 12px 15px;
+  border-top: 1px solid f.color('border');
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(3px);
+}
+
+// info strip above a list (e.g. HQ summary)
+.cl-callout {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: f.space(3);
+  margin-bottom: f.space(4);
+  padding: 12px f.space(4);
+  border-radius: 8px;
+  background: rgba(var(--color-primary-rgb), 0.06);
+  border-left: 4px solid var(--color-primary);
+  font-size: 13px;
+
+  i { color: var(--color-primary); }
+  a { color: f.color('primary-dark'); font-weight: 600; }
+}
+
+// read-only "Headquarters" / "Branch of X" tag on the hotel form
+.cl-type-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 13.5px;
+
+  &--headquarters { background: rgba(var(--color-primary-rgb), 0.08); color: f.color('primary-dark'); font-weight: 600; }
+  &--branch       { background: rgba(29, 16, 48, 0.06); color: f.color('ink'); }
+}
+
+// ---- on/off switch (UiSwitch.vue) ----
+.cl-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+
+  input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+
+  // size: track 36x20, knob 14 (knob travels 36 - 14 - 3 - 3 = 16px)
+  &__track {
+    position: relative;
+    flex-shrink: 0;
+    width: 36px;
+    height: 20px;
+    border-radius: 999px;
+    background: #d5d3dd;
+    transition: background 0.2s;
+  }
+
+  &__thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s;
+  }
+
+  &__text { font-size: 13px; font-weight: 500; color: f.color('muted'); }
+
+  &.is-on {
+    .cl-switch__track { background: var(--gradient-active); }
+    .cl-switch__thumb { transform: translateX(16px); }
+    .cl-switch__text { color: f.color('dark'); }
+  }
+
+  input:focus-visible + .cl-switch__track { @include m.focus-ring; }
+
+  &.is-disabled { opacity: 0.55; cursor: not-allowed; }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__track, &__thumb { transition: none; }
+  }
+}
+
+// ---- table-style editable list (phones, social links...) ----
+// Same look as the data tables: dark header, striped rows, Action column.
+.cl-form-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid f.color('border');
+  font-size: 13.5px;
+
+  th {
+    height: 38px;
+    padding: 0 12px;
+    background: f.color('ink');
+    color: #fff;
+    font-weight: 600;
+    text-align: left;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+
+    &:last-child { border-right: 0; }
+  }
+
+  td {
+    height: 50px;
+    padding: 6px 12px;
+    border-top: 1px solid f.color('border');
+    border-right: 1px solid f.color('border');
+    vertical-align: middle;
+
+    &:last-child { border-right: 0; }
+  }
+
+  tbody tr:nth-child(even) { background: f.color('stripe'); }
+  tbody tr.is-off td:first-child { color: f.color('muted'); }
+
+  .is-center { text-align: center; }
+  .cl-switch { min-height: 0; }
+  .cl-switch-field { margin-bottom: 0; }
+
+  &__input {
+    width: 100%;
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: f.color('field');
+    font-size: 13px;
+    color: f.color('dark');
+
+    &:focus { outline: none; border-color: var(--color-primary); background: f.color('surface'); }
+    &.is-invalid { border-color: f.color('danger'); }
+  }
+
+  &__name {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+
+    i { width: 18px; text-align: center; font-size: 16px; color: f.color('ink'); }
+  }
+
+  tbody tr:not(.is-off) &__name i { color: var(--color-primary); }
+
+  &__muted { color: f.color('muted'); font-size: 12.5px; }
+  &__empty { text-align: center; color: f.color('muted'); }
+
+  tfoot td { height: auto; padding: 0; }
+
+  &__add {
+    width: 100%;
+    padding: 10px;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover { background: rgba(var(--color-primary-rgb), 0.05); }
+  }
+
+  .cl-field__error { margin-top: 4px; font-size: 12px; }
+
+  // dropdown inside a cell
+  .cl-select { display: block; width: 100%; min-width: 0; }
+  .cl-select__toggle { height: 34px; border-color: transparent; background: f.color('field'); }
+
+  // phones: each row becomes a small card with labels
+  @include m.respond-to('sm') {
+    thead { display: none; }
+
+    tbody tr { display: block; padding: 6px 0; border-top: 1px solid f.color('border'); }
+
+    td {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: auto;
+      padding: 6px 12px;
+      border: 0;
+
+      &::before {
+        content: attr(data-label);
+        flex: 0 0 90px;
+        font-size: 12px;
+        font-weight: 600;
+        color: f.color('ink');
+      }
+
+      &.is-center { justify-content: flex-start; }
+
+      // the field takes the rest of the row
+      > input, > .cl-select { flex: 1; min-width: 0; }
+      &[colspan]::before { content: none; }
+    }
+  }
+}
+
+// small info line with an icon, e.g. "! Add or switch off methods in Settings"
+.cl-note {
+  display: flex;
+  align-items: flex-start; // icon stays on the first line when the text wraps (phones)
+  gap: 7px;
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: f.color('muted');
+
+  i { flex-shrink: 0; margin-top: 2px; font-size: 12px; color: f.color('gold'); }
+  a { color: var(--color-primary); font-weight: 500; }
+}
+
+// ---- switch table (UiToggleTable.vue) - extends .cl-form-table ----
+.cl-toggle-table {
+  td { height: 48px; }
+  .cl-switch-field { display: inline-block; margin: 0; }
+  .cl-switch { min-height: 0; }
+  // the switch itself sits in the centre of the Action column; its label hangs to the right
+  td.is-center .cl-switch { position: relative; }
+  td.is-center .cl-switch__text { position: absolute; left: calc(100% + 8px); top: 50%; transform: translateY(-50%); white-space: nowrap; }
+  .is-enabled-text .cl-switch__text { color: f.color('success'); font-weight: 600; }
+  .cl-badge { margin: 0 0 0 4px; }
+  tbody tr.is-off .cl-form-table__name { color: f.color('dark'); } // keep names readable when off
+
+  &__logo { max-width: 56px; max-height: 24px; object-fit: contain; }
+
+  @include m.respond-to('sm') {
+    td.is-center { justify-content: flex-start; }
+  }
+}
+
+// grey section row inside a toggle table (one per category)
+.cl-toggle-table__section td {
+  height: 40px;
+  background: #e9e8ee;
+  color: f.color('ink');
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+@include m.respond-to('sm') {
+  // phones: dark title stays, grey section band, then one line per item: name ... switch
+  .cl-toggle-table {
+    thead { display: table-header-group; }
+    thead th { display: block; height: auto; padding: 10px 12px; }
+    thead th.is-center { display: none; } // 'Action' - the switches at the right edge say it
+
+    tbody tr { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 0 12px; }
+    tbody td { display: flex; align-items: center; height: auto; min-height: 0; padding: 0; border: 0; }
+    tbody td::before { content: none; } // no repeated 'Cards / Action' labels
+
+    .cl-toggle-table__section { min-height: 38px; background: #e9e8ee; } // grey band across the full width
+    .cl-toggle-table__section td { flex: 1; background: transparent; }
+
+    td.is-center .cl-switch__text { position: static; transform: none; }
+    td.is-center { flex: 0 0 auto; justify-content: flex-end; } // switch at the right edge
+  }
+}
+
+// neutral category badge (facilities have no colour)
+.cl-cat-badge.is-neutral { background: rgba(29, 16, 48, 0.06); color: f.color('ink'); }

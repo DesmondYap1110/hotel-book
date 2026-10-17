@@ -1,0 +1,166 @@
+// Theme for the rich text editor (Summernote, UiRichEditor.vue)
+// and the uploader (FilePond, UiFileUpload.vue).
+@use '../abstracts/functions' as f;
+
+// ---- Summernote ----
+.cl-rich {
+  .note-editor.note-frame {
+    border: 1px solid f.color('border');
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: var(--font-body);
+  }
+
+  .note-toolbar {
+    padding: 4px 6px;
+    background: f.color('stripe');
+    border-bottom: 1px solid f.color('border');
+  }
+
+  .note-btn {
+    border-color: f.color('border');
+    background: f.color('surface');
+    color: f.color('dark');
+    font-size: 12px;
+
+    &:hover, &.active { background: rgba(var(--color-primary-rgb), 0.08); color: f.color('primary-dark'); }
+  }
+
+  .note-editable {
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: f.color('dark');
+    background: f.color('surface');
+  }
+
+  .note-placeholder { padding: 12px 14px; color: f.color('muted'); }
+  .note-statusbar { background: f.color('stripe'); }
+
+  &.is-invalid .note-editor.note-frame { border-color: f.color('danger'); box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2); }
+}
+
+// ---- FilePond ----
+.cl-upload {
+  .filepond--root { margin-bottom: 0; font-family: var(--font-body); font-size: 13px; }
+
+  .filepond--panel-root {
+    background: f.color('stripe');
+    border: 2px dashed f.color('border');
+    border-radius: 10px;
+  }
+
+  .filepond--drop-label { color: f.color('muted'); }
+  .filepond--label-action { color: var(--color-primary); text-decoration-color: rgba(var(--color-primary-rgb), 0.4); }
+
+  // previews in a grid (3 per row, 2 on phones)
+  .filepond--item { width: calc(33.33% - 0.5em); }
+  @media (max-width: 576px) { .filepond--item { width: calc(50% - 0.5em); } }
+
+  .filepond--item-panel { border-radius: 8px; }
+  [data-filepond-item-state='processing-complete'] .filepond--item-panel { background: f.color('success'); }
+  [data-filepond-item-state*='error'] .filepond--item-panel,
+  [data-filepond-item-state*='invalid'] .filepond--item-panel { background: f.color('danger'); }
+
+  &.is-invalid .filepond--panel-root { border-color: f.color('danger'); }
+}
+
+// rich text shown on a page (already cleaned by the server)
+.cl-rich-text {
+  font-size: 14px;
+  line-height: 1.6;
+
+  p:last-child { margin-bottom: 0; }
+  h2, h3, h4 { margin: 0.6em 0 0.3em; font-weight: 600; color: f.color('ink'); }
+  a { color: var(--color-primary); }
+}
+
+// ---- round photo (variant="avatar") ----
+.cl-upload--avatar {
+  width: 150px;
+  margin: 0 auto;
+
+  .filepond--root { margin: 0; }
+  .filepond--panel-root { background: transparent; border: 0; }
+
+  // empty state: building placeholder + "Upload photo"
+  .filepond--drop-label {
+    height: 150px;
+    border-radius: 50%;
+    cursor: pointer;
+
+    label { position: relative; padding: 0; cursor: pointer; }
+  }
+
+  .cl-upload__placeholder {
+    display: block;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px f.color('surface'), 0 0 0 5px f.color('border');
+  }
+
+
+
+  // photo chosen: keep it round, override the grid sizing above
+  .filepond--item { width: 100%; }
+  .filepond--image-preview-wrapper, .filepond--item-panel { border-radius: 50%; }
+  .filepond--image-preview { background: f.color('page'); }
+  .filepond--file-info, .filepond--file-status { display: none; }
+}
+
+// ---- avatar actions: edit (white) + delete (red) on the right of the photo ----
+.cl-upload--avatar { position: relative; }
+
+// FilePond's own small remove / undo (x) buttons are replaced by our delete button,
+// and no green "uploaded" strip on the round photo
+.cl-upload--avatar {
+  .filepond--action-remove-item,
+  .filepond--action-revert-item-processing,
+  .filepond--action-abort-item-processing { display: none; }
+
+  [data-filepond-item-state='processing-complete'] .filepond--item-panel { background: transparent; }
+
+  // image preview overlays (green 'uploaded' / red 'error' glow at the bottom)
+  .filepond--image-preview-overlay { display: none; }
+}
+
+.cl-upload__actions {
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transform: translateY(-20%);
+}
+
+.cl-upload__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(29, 16, 48, 0.18);
+  transition: transform 0.15s, opacity 0.2s;
+
+  &:hover { transform: scale(1.08); }
+  &:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.35); }
+
+  &--edit   { background: f.color('surface'); color: f.color('ink'); }
+  &--delete { background: var(--color-primary); color: #fff; }
+}
+
+// only on hover / keyboard focus (touch screens have no hover, so they stay visible there)
+@media (hover: hover) {
+  .cl-upload__action { opacity: 0; }
+
+  .cl-upload--avatar:hover .cl-upload__action,
+  .cl-upload--avatar:has(:focus-visible) .cl-upload__action { opacity: 1; } // keyboard (Tab) only, not after a mouse click
+}

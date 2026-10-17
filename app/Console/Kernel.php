@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // delete FilePond uploads that were never saved with a form
+        $schedule->command('uploads:clean')->daily();
     }
 
     /**

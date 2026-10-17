@@ -1,3 +1,32 @@
+# Clementra – Hotel Management System
+
+## First install
+
+```bash
+composer install
+npm install
+cp .env.example .env          # then set DB_DATABASE=hotel_book
+php artisan key:generate
+php artisan migrate --seed    # tables + starter data
+php artisan storage:link
+npm run dev
+```
+
+`--seed` adds everything a new install needs, so nobody has to type it in:
+
+| Seeder | Data |
+| --- | --- |
+| `AdminUserSeeder` | admin login **desmondyap64@gmail.com / 123456** (change it after the first login) |
+| `RoomFacilitySeeder` | 50 facilities in 6 categories (Hotel Services, Bedroom, Bathroom, ...) |
+| `PaymentMethodSeeder` | 20 Malaysian payment methods (cards, FPX, DuitNow, e-wallets, BNPL, cash) |
+| `HotelSeeder` | Clementra Headquarters + Main Branch |
+
+The seeders only **add what is missing**, so `php artisan db:seed` is safe to run again on an
+existing database – it never overwrites changes made in the app.
+The lists live in `database/seeders/` – add a row there to ship it to every new install.
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
 <p align="center">

@@ -22,6 +22,12 @@
 @use 'components/alert';
 @use 'components/page-loader';
 @use 'components/select';
+@use 'components/editor-upload';
+@use 'components/tabs';
+@use 'components/date-picker';
+@use 'components/record-switcher';
+@use 'components/group-table';
+@use 'components/modal';
 
 // 4. Layouts (page skeletons)
 @use 'layouts/auth';

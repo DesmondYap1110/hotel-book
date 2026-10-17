@@ -1,0 +1,159 @@
+// TAB LAYOUT  -  menu card (left) + content card (right).  Vue: <ui-tab-layout>
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+.cl-tabs {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: f.space(5);
+  align-items: start;
+
+  // ---- left menu card (header + tabs) ----
+  &__side {
+    position: sticky;
+    top: calc(var(--topbar-height) + 16px);
+    z-index: 10;            // dropdowns in the header (e.g. hotel switcher) float above the content card
+    background: f.color('surface');
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(29, 16, 48, 0.08);
+  }
+
+  // clip only the tab list (rounded bottom corners), so header dropdowns are not cut off
+  &__nav { padding: 0 0 6px; overflow: hidden; border-radius: 0 0 8px 8px; }
+
+  &__header {
+    padding: f.space(5) f.space(4) f.space(4);
+    border-bottom: 1px dashed f.color('border');
+  }
+
+  &__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 18px;
+    border: 0;
+    background: transparent;
+    color: f.color('ink');
+    font-size: 13.5px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover { background: f.color('stripe'); color: f.color('primary-dark'); }
+    &:focus-visible { outline: none; box-shadow: inset 0 0 0 2px rgba(var(--color-primary-rgb), 0.35); }
+
+    // active tab: dark bar like the reference, brand accent on the left
+    &.is-active {
+      background: f.color('ink');
+      color: #fff;
+      font-weight: 600;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--gradient-active);
+      }
+    }
+  }
+
+  &__icon { width: 16px; text-align: center; font-size: 13px; }
+  &__label { flex: 1; }
+
+  &__badge {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: f.color('danger');
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 20px;
+    text-align: center;
+  }
+
+  &__item.has-error:not(.is-active) { color: f.color('danger'); }
+
+  // ---- right content card ----
+  &__panel {
+    min-width: 0;
+    padding: f.space(6) f.space(6) f.space(5);
+    background: f.color('surface');
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(29, 16, 48, 0.06);
+  }
+
+  &__pane > .cl-form-section:first-child { padding-top: 0; border-top: 0; }
+
+  &__footer {
+    display: flex;
+    gap: f.space(3);
+    margin-top: f.space(5);
+    padding-top: f.space(4);
+    border-top: 1px dashed f.color('border');
+  }
+
+  // ---- phones / tablets: menu becomes a scrollable strip ----
+  @include m.respond-to('lg') {
+    grid-template-columns: minmax(0, 1fr);
+    gap: f.space(3);
+
+    &__side { position: relative; top: auto; }
+
+    &__nav {
+      display: flex;
+      overflow-x: auto;
+      padding: 0;
+      scrollbar-width: none;
+    }
+
+    &__item {
+      flex-shrink: 0;
+      width: auto;
+      padding: 12px 14px;
+      white-space: nowrap;
+    }
+
+    &__item.is-active::before { top: auto; right: 0; width: auto; height: 3px; }
+
+    &__panel { padding: f.space(4); }
+  }
+}
+
+// pill buttons (Back / Save Changes in the reference)
+.cl-btn--pill {
+  height: 42px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.cl-btn--gradient {
+  background: var(--gradient-active);
+  color: #fff;
+
+  &:hover { background: var(--gradient-active); color: #fff; filter: brightness(1.08); }
+}
+
+// summary at the top of the tab menu (photo + type)
+.cl-tab-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: f.space(3);
+
+  .cl-upload { margin-bottom: 0; }
+
+  // the type tag can be long ("Branch of Meriton Suites Head Office"): wrap nicely, centred
+  .cl-type-tag { height: auto; min-height: 36px; padding: 8px 14px; line-height: 1.4; text-align: center; justify-content: center; }
+
+  &__note { margin-top: -4px; text-align: center; font-size: 12px; }
+}

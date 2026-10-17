@@ -14,7 +14,7 @@ namespace App\Datatables\Core;
  */
 class Column
 {
-    public string $type = 'text';          // text | html | image | badge | actions
+    public string $type = 'text';          // text | html | image | avatar | badge | actions
     public bool $sortable = false;
     public bool $searchable = false;
     public ?string $field = null;          // database column used to sort/search (defaults to key)
@@ -73,6 +73,15 @@ class Column
     public function image(): static
     {
         $this->type = 'image';
+
+        return $this;
+    }
+
+    /** Cell value is an image URL, shown as a small circle (photos, logos). */
+    public function avatar(): static
+    {
+        $this->type = 'avatar';
+        $this->align = 'center';
 
         return $this;
     }

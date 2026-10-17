@@ -29,6 +29,14 @@ Entry file: `app.scss` (just a list of imports). Compiled to `public/css/app.css
 | list from the database     | `php artisan make:datatable` → `<ui-data-table :server="table">` (see `docs/datatables.md`) |
 | list of an array in Vue    | `<ui-data-table :columns :rows>` + `#cell-<key>` slots   |
 | round action button        | `<ui-icon-button icon="fas fa-pen" variant="danger">`    |
+| date / time / range picker| `<ui-date-picker v-model="form.check_in_time" mode="time">` (modes: date, time, datetime, range) |
+| on/off or active/inactive  | `<ui-switch v-model="form.status" on-value="active" off-value="inactive" on-text="Active" off-text="Inactive">` |
+| jump between records       | `<ui-record-switcher :current :items :current-id>` (example: hotel switcher on `Pages/Hotels/Form.vue`) |
+| switch items on/off (list) | `<ui-toggle-table v-model="form.facility_ids" :rows title="Facilities">` - rows with a category are grouped under grey section rows (Payment + Facilities tabs) |
+| pop-up form / dialog       | `<ui-modal v-model="open" title="...">` + `#footer` (example: `Pages/Settings/PaymentMethods/MethodModal.vue`) |
+| long form split into tabs  | `<ui-tab-layout v-model="tab" :tabs>` + `<template #key>` per tab (example: `Pages/Hotels/Form.vue`) |
+| any description (rich text)| `<ui-rich-editor v-model="form.description">` + `RichText::clean()` in the Request |
+| file / image upload        | `<ui-file-upload v-model="form.images" v-model:busy="uploading" multiple>` + `TempUpload::claim()` on save |
 | page numbers               | `<ui-pagination v-model:page :total-pages>`              |
 
 Vue components live in `resources/js/components/ui/` and are registered globally.

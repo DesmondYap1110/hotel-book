@@ -54,9 +54,10 @@ return [
         'active' => 'admin/payments*',
     ],
     [
-        'label'  => 'Settings',
-        'icon'   => 'fas fa-cog',
-        'url'    => '#',
-        'active' => 'admin/settings*',
+        'label'    => 'Settings',
+        'icon'     => 'fas fa-cog',
+        'children' => [
+            ['label' => 'Payment Methods', 'url' => '/admin/payment-methods', 'active' => 'admin/payment-methods*'],
+        ],
     ],
 ];

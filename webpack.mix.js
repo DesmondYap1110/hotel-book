@@ -1,4 +1,13 @@
 const mix = require('laravel-mix');
+const path = require('path');
+
+// Summernote does require("jQuery") (capital Q). Point it at the same jquery
+// package we import, otherwise the plugin attaches to a second jQuery copy.
+mix.webpackConfig({
+    resolve: {
+        alias: { jQuery: path.resolve(__dirname, 'node_modules/jquery') },
+    },
+});
 
 /*
  |--------------------------------------------------------------------------

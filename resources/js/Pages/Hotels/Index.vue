@@ -1,5 +1,5 @@
 <!--
-  Hotels list. Controller: Admin\Hotel\HotelController@index
+  Hotels list (HQ + branches). Controller: Admin\Hotel\HotelController@index
   Columns / filters / buttons: app/Datatables/Lists/HotelList.php
 -->
 <template>
@@ -7,8 +7,19 @@
 
     <ui-page-card title="Hotels">
         <template #actions>
-            <Link :href="createUrl" class="cl-btn cl-btn--primary"><i class="fas fa-plus"></i> Add Hotel</Link>
+            <Link :href="createUrl" class="cl-btn cl-btn--primary">
+                <i class="fas fa-plus"></i> {{ hq ? 'Add Branch' : 'Add Headquarters' }}
+            </Link>
         </template>
+
+        <div class="cl-callout">
+            <i class="fas fa-building"></i>
+            <template v-if="hq">
+                <span>Headquarters: <Link :href="hq.editUrl">{{ hq.name }}</Link></span>
+                <span>&middot; {{ hq.branches }} {{ hq.branches === 1 ? 'branch' : 'branches' }}</span>
+            </template>
+            <span v-else>No headquarters yet. Add the headquarters first, then its branches.</span>
+        </div>
 
         <ui-data-table :server="table" />
     </ui-page-card>
@@ -16,7 +27,8 @@
 
 <script setup>
 defineProps({
-    table: Object,     // Datatable::props(...)
+    table: Object,
     createUrl: String,
+    hq: Object, // { name, editUrl, branches } or null
 });
 </script>

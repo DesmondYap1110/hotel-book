@@ -9,8 +9,19 @@ import UiTableFilters from './UiTableFilters.vue';
 import UiTableCell from './UiTableCell.vue';
 import UiSelect from './UiSelect.vue';
 import UiInput from './UiInput.vue';
+import UiTextarea from './UiTextarea.vue';
+import UiCheckboxGroup from './UiCheckboxGroup.vue';
+import UiFormSection from './UiFormSection.vue';
+import UiRichEditor from './UiRichEditor.vue';
+import UiFileUpload from './UiFileUpload.vue';
+import UiTabLayout from './UiTabLayout.vue';
+import UiSwitch from './UiSwitch.vue';
+import UiDatePicker from './UiDatePicker.vue';
+import UiRecordSwitcher from './UiRecordSwitcher.vue';
+import UiModal from './UiModal.vue';
+import UiToggleTable from './UiToggleTable.vue';
 
-export { UiPageCard, UiDataTable, UiPagination, UiIconButton, UiTableFilters, UiTableCell, UiSelect, UiInput };
+export { UiPageCard, UiDataTable, UiPagination, UiIconButton, UiTableFilters, UiTableCell, UiSelect, UiInput, UiTextarea, UiCheckboxGroup, UiFormSection, UiRichEditor, UiFileUpload, UiTabLayout, UiSwitch, UiDatePicker, UiRecordSwitcher, UiModal, UiToggleTable };
 
 export default {
     install(app) {
@@ -22,5 +33,16 @@ export default {
         app.component('ui-table-cell', UiTableCell);
         app.component('ui-select', UiSelect);
         app.component('ui-input', UiInput);
+        app.component('ui-textarea', UiTextarea);
+        app.component('ui-checkbox-group', UiCheckboxGroup);
+        app.component('ui-form-section', UiFormSection);
+        app.component('ui-rich-editor', UiRichEditor);   // Summernote
+        app.component('ui-file-upload', UiFileUpload);   // FilePond
+        app.component('ui-tab-layout', UiTabLayout);
+        app.component('ui-switch', UiSwitch);
+        app.component('ui-date-picker', UiDatePicker); // Flatpickr
+        app.component('ui-record-switcher', UiRecordSwitcher);
+        app.component('ui-modal', UiModal);
+        app.component('ui-toggle-table', UiToggleTable);
     },
 };

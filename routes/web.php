@@ -6,7 +6,9 @@ use App\Http\Controllers\Admin\Room\RoomTypeController;
 use App\Http\Controllers\Admin\Room\RoomFacilityController;
 use App\Http\Controllers\Admin\Hotel\HotelController;
 use App\Http\Controllers\Admin\Core\DatatableController;
+use App\Http\Controllers\Admin\Core\UploadController;
 use App\Http\Controllers\Admin\Account\PasswordController;
+use App\Http\Controllers\Admin\Settings\PaymentMethodController;
 use App\Http\Controllers\Auth\LoginController;
 
 /*
@@ -39,10 +41,19 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth'], fu
     // one JSON endpoint for every table (lists registered in config/datatables.php)
     Route::get('datatables/{list}', [DatatableController::class, 'show'])->name('datatables.show');
 
+    // FilePond temp uploads (<ui-file-upload>)
+    Route::post('uploads', [UploadController::class, 'store'])->name('uploads.store');
+    Route::delete('uploads', [UploadController::class, 'destroy'])->name('uploads.destroy');
+
     Route::get('password', [PasswordController::class, 'edit'])->name('password.edit');
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
-    Route::resource('hotels', HotelController::class)->only(['index','create','edit', 'update','destroy']);
+    // Settings › Payment Methods
+    Route::post('payment-methods/reorder', [PaymentMethodController::class, 'reorder'])->name('payment-methods.reorder');
+    Route::patch('payment-methods/{payment_method}/toggle', [PaymentMethodController::class, 'toggle'])->name('payment-methods.toggle');
+    Route::resource('payment-methods', PaymentMethodController::class)->only(['index', 'store', 'update', 'destroy']); // add / edit = modal
+
+    Route::resource('hotels', HotelController::class)->only(['index','create','store','edit', 'update','destroy']);
 
     Route::resource('rooms', RoomController::class)->only(['index','create','store','edit', 'update','destroy']);
 
