@@ -16,10 +16,27 @@
     background: f.color('surface');
     border-radius: 8px;
     box-shadow: 0 4px 18px rgba(29, 16, 48, 0.08);
+
+    // never taller than the screen: the header stays, the tab list scrolls (many tabs)
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - var(--topbar-height) - 32px);
   }
 
-  // clip only the tab list (rounded bottom corners), so header dropdowns are not cut off
-  &__nav { padding: 0 0 6px; overflow: hidden; border-radius: 0 0 8px 8px; }
+  // only the tab list scrolls/clips (rounded bottom corners), so header dropdowns are not cut off
+  &__nav {
+    position: relative;     // offsetTop of the items = position inside the list (keep active tab in view)
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0 0 6px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: 0 0 8px 8px;
+    scrollbar-width: thin;
+    scrollbar-color: f.color('border') transparent;
+  }
+
+  &__header { flex-shrink: 0; }
 
   &__header {
     padding: f.space(5) f.space(4) f.space(4);
@@ -105,11 +122,12 @@
     grid-template-columns: minmax(0, 1fr);
     gap: f.space(3);
 
-    &__side { position: relative; top: auto; }
+    &__side { position: relative; top: auto; max-height: none; }
 
     &__nav {
       display: flex;
       overflow-x: auto;
+      overflow-y: hidden;
       padding: 0;
       scrollbar-width: none;
     }

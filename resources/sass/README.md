@@ -26,13 +26,16 @@ Entry file: `app.scss` (just a list of imports). Compiled to `public/css/app.css
 | -------------------------- | -------------------------------------------------------- |
 | add a sidebar link         | `config/admin-menu.php` (no Blade changes)               |
 | page panel with title      | `<ui-page-card title="...">` + `#actions` slot           |
+| short form split in tabs   | `<ui-page-card title="..." v-model:tab="tab" :tabs="[{ key, label, icon, errors }]">` - tabs sit next to the title; wrap sections in `v-show="tab === 'key'"`, put `class="cl-tabbed-form" novalidate` on the form (example: `Pages/RoomTypes/Form.vue`). Long forms with many tabs: `<ui-tab-layout>` |
 | list from the database     | `php artisan make:datatable` → `<ui-data-table :server="table">` (see `docs/datatables.md`) |
 | list of an array in Vue    | `<ui-data-table :columns :rows>` + `#cell-<key>` slots   |
 | round action button        | `<ui-icon-button icon="fas fa-pen" variant="danger">`    |
 | date / time / range picker| `<ui-date-picker v-model="form.check_in_time" mode="time">` (modes: date, time, datetime, range) |
 | on/off or active/inactive  | `<ui-switch v-model="form.status" on-value="active" off-value="inactive" on-text="Active" off-text="Inactive">` |
 | jump between records       | `<ui-record-switcher :current :items :current-id>` (example: hotel switcher on `Pages/Hotels/Form.vue`) |
+| address (Malaysia aware)   | `<ui-address :form="form">` - Malaysia only: postcode fills State + City (API: `/admin/locations/malaysia/*`) |
 | switch items on/off (list) | `<ui-toggle-table v-model="form.facility_ids" :rows title="Facilities">` - rows with a category are grouped under grey section rows (Payment + Facilities tabs) |
+| collapsible card (FAQ...)  | `<ui-accordion v-model:open="item.open" :title>` + slots `#before` (drag grip) / `#actions` (delete) - example: FAQ + Rooms tabs on `Pages/Hotels/Form.vue`. List helpers: `.cl-drag-handle` (grip), `.cl-list-empty` (empty box), `.cl-list-add` ("+ Add ..." bar) |
 | pop-up form / dialog       | `<ui-modal v-model="open" title="...">` + `#footer` (example: `Pages/Settings/PaymentMethods/MethodModal.vue`) |
 | long form split into tabs  | `<ui-tab-layout v-model="tab" :tabs>` + `<template #key>` per tab (example: `Pages/Hotels/Form.vue`) |
 | any description (rich text)| `<ui-rich-editor v-model="form.description">` + `RichText::clean()` in the Request |

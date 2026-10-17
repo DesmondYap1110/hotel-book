@@ -8,6 +8,7 @@
   badge   -> pill(s) from { label, variant } or an array of them
   actions -> round buttons from App\Datatables\Core\Actions (emits "action")
   html    -> trusted HTML from the server
+  text with "\n" -> first line normal, the rest small and grey ("Name\nemail@x.com")
 -->
 <template>
     <img v-if="column.type === 'image'" :src="value" class="cl-table__img" alt="" loading="lazy">
@@ -34,6 +35,12 @@
 
     <span v-else-if="column.type === 'html'" v-html="value"></span>
 
+    <!-- "Main line\nsmall grey line" (e.g. guest name + email) -->
+    <span v-else-if="lines.length > 1" class="cl-table__lines">
+        <span>{{ lines[0] }}</span>
+        <small v-for="(line, i) in lines.slice(1)" :key="i">{{ line }}</small>
+    </span>
+
     <template v-else>{{ value ?? '' }}</template>
 </template>
 
@@ -45,6 +52,8 @@ const props = defineProps({
     value: { default: null },
 });
 defineEmits(['action']);
+
+const lines = computed(() => (typeof props.value === 'string' ? props.value.split('\n') : []));
 
 const badges = computed(() => {
     if (!props.value) return [];

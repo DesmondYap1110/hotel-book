@@ -44,6 +44,11 @@ class AdminMenu
         foreach (config('admin-menu') as $item) {
             foreach ($item['children'] ?? [] as $child) {
                 if ($this->matches($child['active'] ?? null)) {
+                    // "Hotels › Hotels" -> just "Hotels" (child named like its group)
+                    if ($child['label'] === $item['label']) {
+                        return [['label' => $child['label'], 'url' => $child['url']]];
+                    }
+
                     return [
                         ['label' => $item['label'], 'url' => null],
                         ['label' => $child['label'], 'url' => $child['url']],

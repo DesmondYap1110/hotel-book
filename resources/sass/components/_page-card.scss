@@ -7,6 +7,7 @@
 //     <div class="cl-page-card__body"> ... </div>
 //   </section>
 @use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
 
 .cl-page-card {
   background: f.color('surface');
@@ -38,5 +39,79 @@
 
   &__body {
     padding: 24px 15px 24px;
+  }
+
+  // ---- optional tabs in the header (ui-page-card :tabs) ----
+  // title and tab labels share one line; the tabs sit on the header's bottom line
+  &__header.has-tabs { padding-bottom: 0; align-items: flex-end; }
+  &__header.has-tabs &__title { padding-bottom: 13px; line-height: 1.4; }
+
+  &__tabs {
+    position: relative;
+    display: flex;
+    align-self: flex-end;
+    gap: 4px;
+    min-width: 0;          // stay inside the card (scroll) instead of growing to fit every tab
+    margin-bottom: -1px;   // active bar sits on the header's dashed line
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px 14px;
+    border: 0;
+    background: transparent;
+    color: f.color('muted');
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.15s;
+
+    i { font-size: 12px; }
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 0;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+      background: var(--gradient-active);
+      transform: scaleX(0);
+      transition: transform 0.2s;
+    }
+
+    &:hover { color: f.color('ink'); }
+    &:focus-visible { outline: none; box-shadow: inset 0 0 0 2px rgba(var(--color-primary-rgb), 0.35); border-radius: 6px; }
+
+    &.is-active {
+      color: f.color('ink');
+      font-weight: 600;
+
+      i { color: var(--color-primary); }
+      &::after { transform: scaleX(1); }
+    }
+
+    &.has-error:not(.is-active) { color: f.color('danger'); }
+  }
+
+  // a form split by these tabs shows one section at a time: no divider above it
+  .cl-tabbed-form > .cl-form-section { padding-top: 0; border-top: 0; }
+
+  // phones: title on its own line, tabs become a sideways-scrolling strip under it
+  @include m.respond-to('md') {
+    // nowrap: a wrapping column grows to its widest child, so the strip would never scroll
+    &__header.has-tabs { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 0; }
+    &__header.has-tabs &__title { padding: 4px 0 8px; }
+    &__tabs { align-self: stretch; margin: 0 -15px -1px; padding: 0 9px; }
+    &__tab { padding: 10px 12px 12px; }
   }
 }

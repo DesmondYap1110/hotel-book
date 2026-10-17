@@ -59,5 +59,20 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+
+        // making a booking HOLDS a room - stop one visitor from holding every room without paying
+        // (generous enough for typos + retries, and for many guests behind one hotel / mobile network IP)
+        RateLimiter::for('booking', function (Request $request) {
+            return [
+                Limit::perMinute(10)->by($request->ip()),
+                Limit::perHour(60)->by($request->ip()),
+            ];
+        });
+
+        // "pay again" on one booking (it doesn't hold anything new)
+        RateLimiter::for('booking-pay', function (Request $request) {
+            // throttle runs before route binding: 'booking' is still the reference string here
+            return Limit::perMinute(10)->by('pay:'.$request->route()->originalParameter('booking').':'.$request->ip());
+        });
     }
 }

@@ -20,8 +20,10 @@ import UiDatePicker from './UiDatePicker.vue';
 import UiRecordSwitcher from './UiRecordSwitcher.vue';
 import UiModal from './UiModal.vue';
 import UiToggleTable from './UiToggleTable.vue';
+import UiAddress from './UiAddress.vue';
+import UiAccordion from './UiAccordion.vue';
 
-export { UiPageCard, UiDataTable, UiPagination, UiIconButton, UiTableFilters, UiTableCell, UiSelect, UiInput, UiTextarea, UiCheckboxGroup, UiFormSection, UiRichEditor, UiFileUpload, UiTabLayout, UiSwitch, UiDatePicker, UiRecordSwitcher, UiModal, UiToggleTable };
+export { UiPageCard, UiDataTable, UiPagination, UiIconButton, UiTableFilters, UiTableCell, UiSelect, UiInput, UiTextarea, UiCheckboxGroup, UiFormSection, UiRichEditor, UiFileUpload, UiTabLayout, UiSwitch, UiDatePicker, UiRecordSwitcher, UiModal, UiToggleTable, UiAddress, UiAccordion };
 
 export default {
     install(app) {
@@ -44,5 +46,7 @@ export default {
         app.component('ui-record-switcher', UiRecordSwitcher);
         app.component('ui-modal', UiModal);
         app.component('ui-toggle-table', UiToggleTable);
+        app.component('ui-address', UiAddress);       // Malaysia postcode / state / city
+        app.component('ui-accordion', UiAccordion);   // collapsible card
     },
 };

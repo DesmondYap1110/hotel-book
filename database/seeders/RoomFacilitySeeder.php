@@ -5,31 +5,19 @@ namespace Database\Seeders;
 use App\Models\RoomFacility;
 use Illuminate\Database\Seeder;
 
-/** Facilities list (Rooms › Room Facilities). Category keys: RoomFacility::CATEGORIES. */
+/** In-room facilities (Rooms › Room Facilities), ticked per room type. Category keys: RoomFacility::CATEGORIES. */
 class RoomFacilitySeeder extends Seeder
 {
     public const FACILITIES = [
-        'hotel' => [
-            'Free Wi-Fi', 'Car parking', 'Fitness centre', 'Indoor pool', 'Spa', 'Sauna',
-            '24-hour guest services', 'In-suite laundry', 'Opening windows', 'Flat-screen TV',
-            'TV streaming', 'Coffee capsule machine', 'Restaurant', 'Bar', 'Airport shuttle',
-            'Accessible rooms', 'Meeting rooms',
-        ],
-        'bedroom' => [
-            'Complimentary water', 'TV with cable', 'Telephone', 'Hangers', 'Luggage storage',
-            'Air conditioning', 'Minibar', 'Coffee maker', 'Microwave', 'Connectors for laptops',
-            'Coworking spaces',
-        ],
-        'bathroom' => [
-            'Hair dryer', 'Essentials kit', 'Towels', 'Combs', 'Bathrobes', 'Slippers',
-            'Water heater', 'Bathtub',
-        ],
-        'outside' => [
-            'Dining options', 'Recreational activities', 'Swimming pool', 'Sauna',
-            'High speed Wi-Fi', 'Charging stations', 'Gym or fitness center',
-        ],
-        'luxury' => ['Spa experience', 'Kids equipment', 'Pet friendliness', 'Car services'],
-        'food'   => ['Fresh fruit bowl', 'Welcome champagne bottle', 'Treat'],
+        'kitchen'       => ['Electric kettle'],
+        'bathroom'      => ['Hair dryer', 'Open air bath privileges', 'Mirror', 'Toiletries', 'Towels'],
+        'entertainment' => ['Free Wi-Fi in all rooms', 'Telephone', 'Satellite / cable channels'],
+        'comforts'      => ['Air conditioning', 'Wake-up service', 'Slippers'],
+        'dining'        => ['Coffee / tea maker', 'Full kitchen', 'Minibar', 'Refrigerator', 'Free bottled water', 'Microwave'],
+        'services'      => ['Daily housekeeping'],
+        'layout'        => ['Carpeting', 'Tile / marble flooring', 'Wooden / parquet flooring', 'Desk', 'Trash cans',
+            'Fold-up bed', 'Window', 'Interconnecting rooms available', 'High floor'],
+        'clothing'      => ['Closet', 'Ironing facilities'],
     ];
 
     public function run()

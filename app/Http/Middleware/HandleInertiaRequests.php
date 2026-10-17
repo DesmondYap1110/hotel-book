@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Payments\PaymentManager;
 use App\Support\AdminMenu;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -47,6 +48,8 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'status' => fn () => $request->session()->get('status'),
             ],
+            // true on local / staging: the public site shows a "test mode" bar (config/payments.php)
+            'paymentsMock' => fn () => app(PaymentManager::class)->isMock(),
             // only needed by the admin layout (skip the work on guest pages)
             'menu' => fn () => $request->user() ? $menu->items() : [],
             'breadcrumbs' => fn () => $request->user() ? $menu->breadcrumbs() : [],

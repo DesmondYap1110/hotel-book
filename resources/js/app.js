@@ -9,16 +9,20 @@ import { createInertiaApp, router, Link, Head } from '@inertiajs/vue3';
 import { createPinia } from 'pinia';
 import UiKit from './components/ui';
 import AdminLayout from './Layouts/AdminLayout.vue';
+import PublicLayout from './Layouts/PublicLayout.vue';
 
 createInertiaApp({
     title: (title) => (title ? `${title} | Clementra` : 'Clementra'),
 
     // 'Rooms/Index' -> ./Pages/Rooms/Index.vue
-    // Pages get the admin layout automatically; Auth/* pages have none.
+    // Layout by folder: Public/* = customer booking site, Auth/* = none, everything else = admin.
+    // A page can still choose its own:  defineOptions({ layout: null })
     resolve: (name) => import(`./Pages/${name}.vue`).then((module) => {
         const page = module.default;
         if (page.layout === undefined) {
-            page.layout = name.startsWith('Auth/') ? null : AdminLayout;
+            if (name.startsWith('Auth/')) page.layout = null;
+            else if (name.startsWith('Public/')) page.layout = PublicLayout;
+            else page.layout = AdminLayout;
         }
         return page;
     }),

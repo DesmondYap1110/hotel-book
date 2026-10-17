@@ -2,86 +2,34 @@
 
 namespace App\Http\Controllers\Admin\Room;
 
-use App\Datatables\Core\Datatable;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\Core\FacilityController;
 use App\Models\RoomFacility;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Inertia\Inertia;
 
-class RoomFacilityController extends Controller
+/** Rooms › Room Facilities (kettle, hair dryer, minibar...). All the work is in FacilityController. */
+class RoomFacilityController extends FacilityController
 {
-    /** Vue page: resources/js/Pages/RoomFacilities/Index.vue (table: app/Datatables/Lists/RoomFacilityList.php) */
-    public function index()
+    protected function model(): string
     {
-        return Inertia::render('RoomFacilities/Index', [
-            'table'     => Datatable::props('room-facilities'),
-            'createUrl' => route('admin.room-facilities.create'),
-        ]);
+        return RoomFacility::class;
     }
 
-    /** Vue page: resources/js/Pages/RoomFacilities/Form.vue (used for Add and Edit) */
-    public function create()
+    protected function routeName(): string
     {
-        return $this->form(new RoomFacility());
+        return 'admin.room-facilities';
     }
 
-    public function store(Request $request)
+    protected function title(): string
     {
-        RoomFacility::create($this->validated($request));
-
-        return redirect()->route('admin.room-facilities.index')->with('status', 'Facility added.');
+        return 'Room Facilities';
     }
 
-    public function edit(RoomFacility $roomFacility)
+    protected function listName(): string
     {
-        return $this->form($roomFacility);
+        return 'room-facilities';
     }
 
-    public function update(Request $request, RoomFacility $roomFacility)
+    protected function example(): string
     {
-        $roomFacility->update($this->validated($request, $roomFacility));
-
-        return redirect()->route('admin.room-facilities.index')->with('status', 'Facility updated.');
-    }
-
-    public function destroy(Request $request, RoomFacility $roomFacility)
-    {
-        $roomFacility->delete();
-
-        if ($request->expectsJson()) {
-            return response()->json(['message' => 'Facility deleted.']);
-        }
-
-        return redirect()->route('admin.room-facilities.index')->with('status', 'Facility deleted.');
-    }
-
-    private function form(RoomFacility $facility)
-    {
-        return Inertia::render('RoomFacilities/Form', [
-            'facility'   => $facility->only('id', 'name', 'category'),
-            'categories' => collect(RoomFacility::CATEGORIES)
-                ->map(fn ($label, $value) => ['value' => $value, 'label' => $label])
-                ->values(),
-            'submitUrl'  => $facility->exists
-                ? route('admin.room-facilities.update', $facility)
-                : route('admin.room-facilities.store'),
-            'backUrl'    => route('admin.room-facilities.index'),
-        ]);
-    }
-
-    private function validated(Request $request, ?RoomFacility $facility = null): array
-    {
-        return $request->validate([
-            'category' => ['required', Rule::in(array_keys(RoomFacility::CATEGORIES))],
-            'name'     => [
-                'required', 'string', 'max:100',
-                Rule::unique('room_facilities')
-                    ->where('category', $request->input('category'))
-                    ->ignore($facility?->id),
-            ],
-        ], [
-            'name.unique' => 'This facility already exists in that category.',
-        ]);
+        return 'e.g. Electric kettle';
     }
 }

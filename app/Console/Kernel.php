@@ -17,6 +17,9 @@ class Kernel extends ConsoleKernel
     {
         // delete FilePond uploads that were never saved with a form
         $schedule->command('uploads:clean')->daily();
+
+        // unpaid bookings past their hold time -> expired
+        $schedule->command('bookings:expire')->everyMinute()->withoutOverlapping();
     }
 
     /**

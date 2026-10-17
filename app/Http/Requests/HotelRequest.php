@@ -3,8 +3,11 @@
 namespace App\Http\Requests;
 
 use App\Models\Hotel;
+use App\Models\Malaysia\State;
 use App\Models\PaymentMethod;
-use App\Models\RoomFacility;
+use App\Models\Room;
+use App\Models\HotelFacility;
+use App\Models\RoomType;
 use App\Support\RichText;
 use App\Support\TempUpload;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,11 +31,22 @@ class HotelRequest extends FormRequest
             //   editing  -> keeps its type (HQ stays HQ, branch stays branch)
             //   adding   -> HQ if there is none yet, otherwise a branch
             'type' => $this->route('hotel')?->type ?? (Hotel::hq() ? Hotel::TYPE_BRANCH : Hotel::TYPE_HQ),
+
+            // Malaysia only - no Country field in the form
+            'country' => 'Malaysia',
         ]);
 
         // clean every rich text (Summernote) field so only safe HTML is ever saved
         foreach (self::RICH_TEXT as $field) {
             $this->merge([$field => RichText::clean($this->input($field))]);
+        }
+
+        // FAQ answers are rich text too
+        if (is_array($this->input('faqs'))) {
+            $this->merge(['faqs' => array_map(
+                fn ($faq) => is_array($faq) ? ['question' => trim((string) ($faq['question'] ?? '')), 'answer' => RichText::clean($faq['answer'] ?? null)] : $faq,
+                array_values($this->input('faqs'))
+            )]);
         }
     }
 
@@ -59,9 +73,7 @@ class HotelRequest extends FormRequest
             'city'          => ['required', 'string', 'max:100'],
             'state'         => ['nullable', 'string', 'max:100'],
             'postcode'      => ['nullable', 'string', 'max:20'],
-            'country'       => ['required', 'string', 'max:100'],
-            'latitude'      => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude'     => ['nullable', 'numeric', 'between:-180,180'],
+            'country'       => ['required', Rule::in(['Malaysia'])],
             'map_url'       => ['nullable', 'url', 'max:500'],
 
             // contact
@@ -91,13 +103,32 @@ class HotelRequest extends FormRequest
 
             // facilities
             'facility_ids'   => ['array'],
-            'facility_ids.*' => ['integer', Rule::exists(RoomFacility::class, 'id')],
+            'facility_ids.*' => ['integer', Rule::exists(HotelFacility::class, 'id')],
 
             // nearby places
             'nearby_places'               => ['array', 'max:50'],
             'nearby_places.*.name'        => ['required', 'string', 'max:150'],
             'nearby_places.*.category'    => ['required', Rule::in(array_keys(Hotel::PLACE_CATEGORIES))],
             'nearby_places.*.distance_km' => ['nullable', 'numeric', 'min:0', 'max:9999'],
+
+            // nightly price per room type: { room_type_id: price }, empty = not sold online
+            'rates'   => ['array'],
+            'rates.*' => ['nullable', 'numeric', 'min:1', 'max:99999'],
+
+            // rooms: levels (floors) -> rooms. id = existing row, null = new
+            'levels'                        => ['array', 'max:100'],
+            'levels.*.id'                   => ['nullable', 'integer'],
+            'levels.*.name'                 => ['required', 'string', 'max:50'],
+            'levels.*.rooms'                => ['array', 'max:300'],
+            'levels.*.rooms.*.id'           => ['nullable', 'integer'],
+            'levels.*.rooms.*.room_number'  => ['required', 'string', 'max:10'],
+            'levels.*.rooms.*.room_type_id' => ['nullable', 'integer', Rule::exists(RoomType::class, 'id')],
+            'levels.*.rooms.*.status'       => ['required', Rule::in(array_keys(Room::STATUSES))],
+
+            // FAQ
+            'faqs'           => ['array', 'max:50'],
+            'faqs.*.question' => ['required', 'string', 'max:255'],
+            'faqs.*.answer'   => ['nullable', 'string', 'max:10000'], // rich text (HTML)
 
             // photo (<ui-file-upload variant="avatar">): [] = no photo, [{ id: 'current' }] = keep, [{ upload }] = new
             'photo'          => ['array', 'max:1'],
@@ -120,11 +151,68 @@ class HotelRequest extends FormRequest
                 $validator->errors()->add('type', 'Add the headquarters first, then its branches.');
             }
 
+            $this->validateMalaysiaAddress($validator);
+            $this->validateRooms($validator, $hotel);
+
             $upload = $this->input('photo.0.upload');
             if ($upload && ! TempUpload::exists($upload)) {
                 $validator->errors()->add('photo', 'The photo upload expired. Please upload it again.');
             }
         });
+    }
+
+    /** State must be a Malaysian state, city must belong to it, postcode = 5 digits. */
+    private function validateMalaysiaAddress(Validator $validator): void
+    {
+        $state = State::where('name', $this->input('state'))->first();
+        if (! $state) {
+            $validator->errors()->add('state', 'Choose a Malaysian state.');
+
+            return;
+        }
+
+        if (! $state->cities()->where('name', $this->input('city'))->exists()) {
+            $validator->errors()->add('city', "Choose a city in {$state->name}.");
+        }
+
+        if ($this->filled('postcode') && ! preg_match('/^\d{5}$/', $this->input('postcode'))) {
+            $validator->errors()->add('postcode', 'A Malaysian postcode has 5 digits.');
+        }
+    }
+
+    /** Room numbers are unique per hotel; ids sent back must belong to this hotel. */
+    private function validateRooms(Validator $validator, ?Hotel $hotel): void
+    {
+        $unknownTypes = array_diff(array_keys((array) $this->input('rates', [])), RoomType::pluck('id')->all());
+        if ($unknownTypes) {
+            $validator->errors()->add('rates', 'A room type was removed. Reload the page.');
+        }
+
+        $levelIds = $hotel ? $hotel->levels()->pluck('id')->all() : [];
+        $roomIds = $hotel ? $hotel->rooms()->pluck('id')->all() : [];
+        $seen = [];
+
+        foreach ((array) $this->input('levels', []) as $i => $level) {
+            if (! empty($level['id']) && ! in_array((int) $level['id'], $levelIds, true)) {
+                $validator->errors()->add("levels.{$i}.name", 'This level no longer exists. Reload the page.');
+            }
+
+            foreach ((array) ($level['rooms'] ?? []) as $j => $room) {
+                if (! empty($room['id']) && ! in_array((int) $room['id'], $roomIds, true)) {
+                    $validator->errors()->add("levels.{$i}.rooms.{$j}.room_number", 'This room no longer exists. Reload the page.');
+                }
+
+                $number = strtoupper(trim((string) ($room['room_number'] ?? '')));
+                if ($number === '') {
+                    continue;
+                }
+                if (isset($seen[$number])) {
+                    $validator->errors()->add("levels.{$i}.rooms.{$j}.room_number", "Room {$number} is already used ({$seen[$number]}).");
+                } else {
+                    $seen[$number] = $level['name'] ?? 'another level';
+                }
+            }
+        }
     }
 
     public function attributes(): array
@@ -135,6 +223,12 @@ class HotelRequest extends FormRequest
             'nearby_places.*.name'        => 'place name',
             'nearby_places.*.distance_km' => 'distance',
             'social_links.*'              => 'social link',
+            'rates.*'                     => 'price',
+            'levels.*.name'               => 'level name',
+            'levels.*.rooms.*.room_number' => 'room number',
+            'levels.*.rooms.*.room_type_id' => 'room type',
+            'faqs.*.question'             => 'question',
+            'faqs.*.answer'               => 'answer',
         ];
     }
 }

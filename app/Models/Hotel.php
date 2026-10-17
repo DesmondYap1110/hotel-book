@@ -51,8 +51,6 @@ class Hotel extends Model
         'payment_methods'   => 'array',
         'parking_available' => 'boolean',
         'star_rating'       => 'integer',
-        'latitude'          => 'float',
-        'longitude'         => 'float',
         'parking_fee'       => 'float',
         'parking_clearance' => 'float',
     ];
@@ -74,9 +72,31 @@ class Hotel extends Model
         return $this->hasMany(HotelNearbyPlace::class)->orderBy('sort_order');
     }
 
+    /** Levels (floors) in order; each has its rooms. */
+    public function levels(): HasMany
+    {
+        return $this->hasMany(HotelLevel::class)->orderBy('sort_order');
+    }
+
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(Room::class);
+    }
+
+    /** Nightly price per room type (hotel form › Room Prices tab). */
+    public function rates(): HasMany
+    {
+        return $this->hasMany(HotelRoomRate::class);
+    }
+
+    public function faqs(): HasMany
+    {
+        return $this->hasMany(HotelFaq::class)->orderBy('sort_order');
+    }
+
     public function facilities(): BelongsToMany
     {
-        return $this->belongsToMany(RoomFacility::class, 'hotel_facility');
+        return $this->belongsToMany(HotelFacility::class, 'hotel_facility');
     }
 
     // ---- helpers ----

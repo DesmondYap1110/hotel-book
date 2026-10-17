@@ -1,0 +1,72 @@
+// ACCORDION  -  collapsible card (title + chevron). Vue: <ui-accordion>
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+.cl-accordion {
+  background: f.color('surface');
+  border: 1px solid f.color('border');
+  border-radius: 6px;
+  transition: box-shadow 0.15s;
+
+  & + & { margin-top: 12px; }
+
+  // open: gold bar on the left, grey header
+  &.is-open {
+    border-left: 3px solid f.color('gold');
+    box-shadow: 0 2px 10px rgba(29, 16, 48, 0.05);
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 54px;
+    padding: 8px 18px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    border-radius: 6px;
+
+    &:hover { background: f.color('stripe'); }
+    &:focus-visible { outline: none; box-shadow: inset 0 0 0 2px rgba(var(--color-primary-rgb), 0.35); }
+  }
+
+  &.is-open &__head {
+    background: f.color('stripe');
+    border-bottom: 1px solid f.color('border');
+    border-radius: 6px 6px 0 0;
+  }
+
+  &__before { display: inline-flex; align-items: center; gap: 8px; color: f.color('muted'); }
+
+  &__title {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: f.color('ink');
+    overflow-wrap: anywhere;
+
+    &.is-placeholder { color: f.color('muted'); font-weight: 500; font-style: italic; }
+  }
+
+  &__meta { margin-left: 8px; font-size: 12px; font-weight: 500; font-style: normal; color: f.color('muted'); }
+
+  &.has-error &__title { color: f.color('danger'); }
+
+  // actions (e.g. delete) only appear on hover / when open - same rule as table rows
+  &__actions { display: inline-flex; gap: 6px; opacity: 0; transition: opacity 0.15s; }
+  &__head:hover &__actions,
+  &.is-open &__actions,
+  &__actions:focus-within { opacity: 1; }
+
+  &__chevron { flex-shrink: 0; width: 14px; font-size: 12px; color: f.color('ink'); text-align: center; }
+
+  &__body { padding: 18px 20px 6px; }
+
+  @include m.respond-to('sm') {
+    &__head { padding: 8px 12px; }
+    &__body { padding: 14px 12px 4px; }
+    &__actions { opacity: 1; } // no hover on touch screens
+  }
+}

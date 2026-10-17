@@ -17,13 +17,48 @@ npm run dev
 | Seeder | Data |
 | --- | --- |
 | `AdminUserSeeder` | admin login **desmondyap64@gmail.com / 123456** (change it after the first login) |
-| `RoomFacilitySeeder` | 50 facilities in 6 categories (Hotel Services, Bedroom, Bathroom, ...) |
+| `HotelFacilitySeeder` | 50 hotel facilities in 6 categories (Hotels › Hotel Facilities: pool, gym, parking, ...) |
+| `RoomFacilitySeeder` | 30 in-room facilities in 8 categories (Rooms › Room Facilities: kettle, hair dryer, minibar, ...) |
 | `PaymentMethodSeeder` | 20 Malaysian payment methods (cards, FPX, DuitNow, e-wallets, BNPL, cash) |
+| `MalaysiaLocationSeeder` | 16 states, 444 cities, 2,933 postcodes for the address fields (from `database/data/malaysia-postcodes.json`, ISC licence) |
 | `HotelSeeder` | Clementra Headquarters + Main Branch |
+| `RoomTypeSeeder` | Standard Queen, Deluxe King, Twin Room, Family Suite (with common room facilities) |
+| `DemoRoomSeeder` | **not on production**: 2 levels × 5 rooms + nightly prices per hotel, so the booking site works at once |
 
 The seeders only **add what is missing**, so `php artisan db:seed` is safe to run again on an
 existing database – it never overwrites changes made in the app.
 The lists live in `database/seeders/` – add a row there to ship it to every new install.
+
+## Booking site & payments
+
+Customers book at `/` (no login, guest checkout) → choose hotel + dates → room type → details → pay.
+The room is **held for 30 minutes** while they pay (`BOOKING_HOLD_MINUTES`); unpaid holds expire.
+
+The payment gateway follows `APP_ENV` (`config/payments.php`):
+
+| APP_ENV | Gateway |
+| --- | --- |
+| `local`, `staging` | **Mock** – a fake gateway page with *Pay* / *Simulate failed payment*. No real money. |
+| `production` | **Billplz** (FPX, cards, e-wallets). The mock is refused in production. |
+
+Production `.env`:
+
+```env
+APP_ENV=production
+BILLPLZ_API_KEY=...
+BILLPLZ_COLLECTION_ID=...
+BILLPLZ_X_SIGNATURE=...      # Billplz > Settings > X Signature Key (turn X Signature on)
+BILLPLZ_SANDBOX=false
+```
+
+To try the real Billplz **sandbox** on staging: `PAYMENT_GATEWAY=billplz` + `BILLPLZ_SANDBOX=true` + sandbox keys.
+Billplz must be able to reach `https://<your-domain>/payments/billplz/callback` (the webhook).
+
+The scheduler must run (it expires unpaid holds every minute):
+
+```bash
+* * * * * cd /path/to/app && php artisan schedule:run >> /dev/null 2>&1
+```
 
 ---
 

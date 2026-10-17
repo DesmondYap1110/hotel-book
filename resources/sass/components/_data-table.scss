@@ -189,6 +189,15 @@
   &--muted   { background: rgba(0, 0, 0, 0.06); color: f.color('muted'); }
 }
 
+// two-line text cell: "Name" + small grey "email"
+.cl-table__lines {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.35;
+
+  small { font-size: 12px; color: f.color('muted'); }
+}
+
 // action buttons never wrap onto two lines
 .cl-table__table td.is-actions { white-space: nowrap; }
 

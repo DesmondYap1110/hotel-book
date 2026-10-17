@@ -2,24 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class RoomFacility extends Model
+/** In-room facility (kettle, hair dryer, minibar...). Rooms › Room Facilities; ticked on the room type form. */
+class RoomFacility extends Facility
 {
-    /** Category key => label shown in the admin. Add a category here. */
+    /** Category key => label. Add a category here. */
     public const CATEGORIES = [
-        'hotel'    => 'Hotel Services',      // property-wide: pool, gym, 24h desk...
-        'bedroom'  => 'Bedroom Amenities',
-        'bathroom' => 'Bathroom Amenities',
-        'outside'  => 'Outside',
-        'luxury'   => 'Luxury Amenities',
-        'food'     => 'Food Amenities',
+        'kitchen'       => 'Kitchen',
+        'bathroom'      => 'Bathroom and Toilets',
+        'entertainment' => 'Entertainment',
+        'comforts'      => 'Comforts',
+        'dining'        => 'Dining, Drinking and Snacking',
+        'services'      => 'Services and Conveniences',
+        'layout'        => 'Layout and Furnishing',
+        'clothing'      => 'Clothing and Laundry',
     ];
 
-    protected $fillable = ['name', 'category'];
-
-    public function getCategoryLabelAttribute(): string
+    public function roomTypes(): BelongsToMany
     {
-        return self::CATEGORIES[$this->category] ?? ucfirst($this->category);
+        return $this->belongsToMany(RoomType::class, 'room_type_facility');
     }
 }

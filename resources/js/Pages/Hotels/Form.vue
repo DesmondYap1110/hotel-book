@@ -5,7 +5,9 @@
 <template>
     <Head :title="title" />
 
-    <form @submit.prevent="submit">
+    <!-- novalidate: the server checks every field and the error opens its tab
+         (browser checks would silently block Save when the bad field is on a hidden tab) -->
+    <form novalidate @submit.prevent="submit">
         <ui-tab-layout v-model="tab" :tabs="tabs">
             <template #header>
                 <div class="cl-tab-summary">
@@ -53,15 +55,8 @@
             <!-- 2. Location -->
             <template #location>
                 <ui-form-section>
-                    <ui-input v-model="form.address_line1" label="Address" :error="form.errors.address_line1" required
-                              placeholder="e.g. 43 Herschel Street" class="is-full" />
-                    <ui-input v-model="form.address_line2" label="Address line 2" :error="form.errors.address_line2" class="is-full" />
-                    <ui-input v-model="form.city" label="City" :error="form.errors.city" required />
-                    <ui-input v-model="form.state" label="State" :error="form.errors.state" />
-                    <ui-input v-model="form.postcode" label="Postcode" :error="form.errors.postcode" />
-                    <ui-input v-model="form.country" label="Country" :error="form.errors.country" required />
-                    <ui-input v-model="form.latitude" label="Latitude" :error="form.errors.latitude" inputmode="decimal" placeholder="-27.4669" />
-                    <ui-input v-model="form.longitude" label="Longitude" :error="form.errors.longitude" inputmode="decimal" placeholder="153.0179" />
+                    <!-- Malaysia: postcode fills State + City (see components/ui/UiAddress.vue) -->
+                    <ui-address :form="form" />
                     <ui-input v-model="form.map_url" label="Google Maps link" :error="form.errors.map_url" type="url" class="is-full" />
                 </ui-form-section>
             </template>
@@ -192,10 +187,144 @@
                         <label class="cl-field__label">Facilities available</label>
                         <p class="cl-note">
                             <i class="fas fa-exclamation-circle"></i>
-                            <span>Add or rename facilities in <Link href="/admin/room-facilities">Rooms › Room Facilities</Link>.</span>
+                            <span>Add or rename facilities in <Link href="/admin/hotel-facilities">Hotels › Hotel Facilities</Link>.</span>
                         </p>
                         <ui-toggle-table v-model="form.facility_ids" :rows="facilityRows" title="Facilities"
                                          empty-text="No facilities yet." />
+                    </div>
+                </ui-form-section>
+            </template>
+
+            <!-- Room Prices: price per night for each room type (empty = not sold online at this hotel) -->
+            <template #prices>
+                <ui-form-section>
+                    <div class="cl-field is-full">
+                        <p class="cl-note">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Price per night at this hotel. Guests can book a room type online when it has a price and at least one room
+                                with status Available (Rooms tab). Leave empty to not sell it online.</span>
+                        </p>
+
+                        <table class="cl-form-table cl-rate-table">
+                            <thead>
+                                <tr>
+                                    <th>Room Type</th>
+                                    <th class="is-center" style="width: 110px">Rooms</th>
+                                    <th style="width: 220px">Price per night (RM)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="type in options.roomTypes" :key="type.value" :class="{ 'is-off': !form.rates[type.value] }">
+                                    <td data-label="Room Type"><span class="cl-form-table__name">{{ type.label }}</span></td>
+                                    <td class="is-center" data-label="Rooms">{{ roomsOfType(type.value) }}</td>
+                                    <td data-label="Price / night">
+                                        <input v-model="form.rates[type.value]" type="number" min="1" step="0.01" inputmode="decimal"
+                                               class="cl-form-table__input" placeholder="Not sold online"
+                                               :class="{ 'is-invalid': form.errors[`rates.${type.value}`] }">
+                                        <div v-if="form.errors[`rates.${type.value}`]" class="cl-field__error">{{ form.errors[`rates.${type.value}`] }}</div>
+                                        <div v-else-if="form.rates[type.value] && !roomsOfType(type.value)" class="cl-field__hint is-warning">No rooms of this type yet - guests can't book it.</div>
+                                    </td>
+                                </tr>
+                                <tr v-if="!options.roomTypes.length">
+                                    <td colspan="3" class="cl-form-table__empty">No room types yet - add them in Rooms › Room Types first.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div v-if="form.errors.rates" class="cl-field__error">{{ form.errors.rates }}</div>
+                    </div>
+                </ui-form-section>
+            </template>
+
+            <!-- Rooms: levels (floors) -> rooms, each room with a room type -->
+            <template #rooms>
+                <ui-form-section>
+                    <div class="cl-field is-full">
+                        <p class="cl-note">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Add each level (floor), then its rooms. Room types come from <Link href="/admin/room-types">Rooms › Room Types</Link>.</span>
+                        </p>
+
+                        <draggable v-model="form.levels" item-key="uid" handle=".cl-drag-handle" ghost-class="is-ghost" :animation="150">
+                            <template #item="{ element: level, index: i }">
+                                <ui-accordion v-model:open="level.open" :title="level.name" placeholder="New level"
+                                              :meta="`${level.rooms.length} ${level.rooms.length === 1 ? 'room' : 'rooms'}`" :error="hasErrorUnder(`levels.${i}.`)">
+                                    <template #before>
+                                        <span class="cl-drag-handle" title="Drag to reorder"><i class="fas fa-grip-vertical"></i></span>
+                                    </template>
+                                    <template #actions>
+                                        <ui-icon-button icon="fas fa-trash" title="Remove level" variant="soft-danger" size="sm" @click="removeLevel(i)" />
+                                    </template>
+
+                                    <ui-input v-model="level.name" label="Level name" :error="form.errors[`levels.${i}.name`]"
+                                              placeholder="e.g. Level 1, Ground Floor" />
+
+                                    <div class="cl-field">
+                                        <table class="cl-form-table cl-room-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 22%">Room No.</th>
+                                                    <th>Room Type</th>
+                                                    <th style="width: 24%">Status</th>
+                                                    <th class="is-center" style="width: 80px">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(room, j) in level.rooms" :key="room.uid">
+                                                    <td data-label="Room No.">
+                                                        <input v-model="room.room_number" class="cl-form-table__input" maxlength="10" placeholder="e.g. 101"
+                                                               :class="{ 'is-invalid': form.errors[`levels.${i}.rooms.${j}.room_number`] }">
+                                                        <div v-if="form.errors[`levels.${i}.rooms.${j}.room_number`]" class="cl-field__error">{{ form.errors[`levels.${i}.rooms.${j}.room_number`] }}</div>
+                                                    </td>
+                                                    <td data-label="Room Type">
+                                                        <ui-select v-model="room.room_type_id" :options="options.roomTypes" size="sm" placeholder="No type yet" />
+                                                    </td>
+                                                    <td data-label="Status">
+                                                        <ui-select v-model="room.status" :options="options.roomStatuses" size="sm" />
+                                                    </td>
+                                                    <td class="is-center" data-label="Action">
+                                                        <ui-icon-button icon="fas fa-trash" title="Remove room" variant="soft-danger" size="sm" @click="level.rooms.splice(j, 1)" />
+                                                    </td>
+                                                </tr>
+                                                <tr v-if="!level.rooms.length">
+                                                    <td colspan="4" class="cl-form-table__empty">No rooms on this level yet.</td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr v-if="level.bulk">
+                                                    <td colspan="4">
+                                                        <div class="cl-bulk-add">
+                                                            Rooms
+                                                            <input v-model.trim="level.bulk.from" class="cl-form-table__input" inputmode="numeric" placeholder="101">
+                                                            to
+                                                            <input v-model.trim="level.bulk.to" class="cl-form-table__input" inputmode="numeric" placeholder="110">
+                                                            <ui-select v-model="level.bulk.room_type_id" :options="options.roomTypes" size="sm" placeholder="Room type (optional)" />
+                                                            <button type="button" class="cl-btn cl-btn--primary cl-btn--sm" @click="addRoomRange(level)">Add</button>
+                                                            <button type="button" class="cl-btn cl-btn--light cl-btn--sm" @click="level.bulk = null">Cancel</button>
+                                                        </div>
+                                                        <div v-if="level.bulk.error" class="cl-field__error" style="padding: 0 12px 8px">{{ level.bulk.error }}</div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <div class="cl-form-table__adds">
+                                                            <button type="button" class="cl-form-table__add" @click="addRoom(level, i)">
+                                                                <i class="fas fa-plus"></i> Add room
+                                                            </button>
+                                                            <button type="button" class="cl-form-table__add" @click="openRoomRange(level, i)">
+                                                                <i class="fas fa-layer-group"></i> Add many rooms
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </ui-accordion>
+                            </template>
+                        </draggable>
+
+                        <div v-if="!form.levels.length" class="cl-list-empty">No levels yet. Add the first level, then its rooms.</div>
+                        <button type="button" class="cl-list-add" @click="addLevel"><i class="fas fa-plus"></i> Add level</button>
                     </div>
                 </ui-form-section>
             </template>
@@ -251,6 +380,40 @@
                 </ui-form-section>
             </template>
 
+            <!-- 8. FAQ (drag the grip to reorder) -->
+            <template #faq>
+                <ui-form-section>
+                    <div class="cl-field is-full">
+                        <p class="cl-note">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Questions guests often ask. Shown in this order - drag <i class="fas fa-grip-vertical"></i> to reorder.</span>
+                        </p>
+                        <!-- one collapsible card per question: click to open, drag the grip to reorder -->
+                        <draggable v-model="form.faqs" item-key="uid" handle=".cl-drag-handle" ghost-class="is-ghost" :animation="150">
+                            <template #item="{ element: faq, index: i }">
+                                <ui-accordion v-model:open="faq.open" :title="faq.question ? `${i + 1}. ${faq.question}` : ''"
+                                              :placeholder="`${i + 1}. New question`" :error="hasErrorUnder(`faqs.${i}.`)">
+                                    <template #before>
+                                        <span class="cl-drag-handle" title="Drag to reorder"><i class="fas fa-grip-vertical"></i></span>
+                                    </template>
+                                    <template #actions>
+                                        <ui-icon-button icon="fas fa-trash" title="Remove" variant="soft-danger" size="sm" @click="form.faqs.splice(i, 1)" />
+                                    </template>
+
+                                    <ui-input v-model="faq.question" label="Question" :error="form.errors[`faqs.${i}.question`]"
+                                              placeholder="e.g. Is breakfast included?" />
+                                    <ui-rich-editor v-model="faq.answer" label="Answer" :height="120" placeholder="Write the answer…"
+                                                    :error="form.errors[`faqs.${i}.answer`]" />
+                                </ui-accordion>
+                            </template>
+                        </draggable>
+
+                        <div v-if="!form.faqs.length" class="cl-list-empty">No questions yet.</div>
+                        <button type="button" class="cl-list-add" @click="addFaq"><i class="fas fa-plus"></i> Add question</button>
+                    </div>
+                </ui-form-section>
+            </template>
+
             <template #footer>
                 <Link :href="backUrl" class="cl-btn cl-btn--light cl-btn--pill"><i class="fas fa-chevron-left"></i> Back</Link>
                 <button type="submit" class="cl-btn cl-btn--gradient cl-btn--pill" :disabled="form.processing || uploading">
@@ -265,6 +428,8 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import draggable from 'vuedraggable';
+import Swal from 'sweetalert2';
 import { useBreadcrumbs } from '../../composables/useBreadcrumbs';
 
 const props = defineProps({
@@ -294,13 +459,16 @@ const socialLabel = (network) => ({ x: 'X (Twitter)', linkedin: 'LinkedIn', yout
 // which form fields live on which tab (for the red error counts)
 const TAB_FIELDS = {
     general:    ['type', 'status', 'name', 'brand', 'star_rating', 'tagline', 'description', 'legal_name', 'registration_no'],
-    location:   ['address_line1', 'address_line2', 'city', 'state', 'postcode', 'country', 'latitude', 'longitude', 'map_url'],
+    location:   ['address_line1', 'address_line2', 'city', 'state', 'postcode', 'country', 'map_url'],
     contact:    ['phones', 'email', 'website', 'social_links'],
     stay:       ['check_in_time', 'check_out_time', 'reception_hours', 'late_arrival_note', 'cancellation_policy', 'house_rules'],
     payment:    ['parking_available', 'parking_fee', 'parking_clearance', 'parking_notes', 'payment_methods'],
     facilities: ['facility_ids'],
+    rooms:      ['levels'],
+    prices:     ['rates'],
     nearby:     ['nearby_places'],
-    photo:      ['photo'], // shown on the General tab badge (photo sits above the menu)
+    faq:        ['faqs'],
+    photo:     ['photo'], // shown on the General tab badge (photo sits above the menu)
 };
 const TAB_INFO = {
     general:    ['General', 'fas fa-hotel'],
@@ -309,7 +477,10 @@ const TAB_INFO = {
     stay:       ['Stay & Policies', 'fas fa-concierge-bell'],
     payment:    ['Parking & Payment', 'fas fa-car'],
     facilities: ['Facilities', 'fas fa-swimming-pool'],
-    nearby:     ['Nearby Places', 'fas fa-map-signs'],
+    rooms:      ['Rooms', 'fas fa-door-open'],
+    prices:     ['Room Prices', 'fas fa-tags'],
+    nearby:    ['Nearby Places', 'fas fa-map-signs'],
+    faq:        ['FAQ', 'fas fa-question-circle'],
 };
 
 const tab = ref('general');
@@ -331,6 +502,7 @@ const switcherCurrent = computed(() => ({
 
 const h = props.hotel;
 const uploading = ref(false); // true while FilePond is still uploading
+let uid = 0; // stable keys for list rows (drag + editors); never sent to the server
 
 const form = useForm({
     ...h,
@@ -340,6 +512,14 @@ const form = useForm({
     payment_methods: [...(h.payment_methods || [])],
     facility_ids: [...(h.facility_ids || [])],
     nearby_places: (h.nearby_places || []).map((p) => ({ ...p })),
+    // { room_type_id: price } - every room type gets a box ('' = not sold online)
+    rates: Object.fromEntries(props.options.roomTypes.map((t) => [t.value, h.rates?.[t.value] ?? ''])),
+    // uid / open / bulk = UI only (open = card expanded)
+    levels: (h.levels || []).map((l) => ({
+        uid: ++uid, open: false, bulk: null, id: l.id, name: l.name,
+        rooms: l.rooms.map((r) => ({ uid: ++uid, ...r })),
+    })),
+    faqs: (h.faqs || []).map((f) => ({ uid: ++uid, open: false, question: f.question, answer: f.answer ?? '' })),
     // [] = no photo, [{ id: 'current', url }] = existing, [{ upload }] = new (FilePond)
     photo: (h.photo || []).map((p) => ({ ...p })),
 });
@@ -373,17 +553,88 @@ const facilityRows = props.options.facilities.flatMap((group) => group.items.map
     category: { label: group.label },
 })));
 
+// any error under 'levels.0.' / 'faqs.2.' -> that card turns red (and opens after a failed save)
+const hasErrorUnder = (prefix) => Object.keys(form.errors).some((field) => field.startsWith(prefix));
+
+// ---- FAQ: a new question opens straight away ----
+const addFaq = () => form.faqs.push({ uid: ++uid, open: true, question: '', answer: '' });
+
+// ---- Rooms: levels -> rooms ----
+const usedNumbers = () => new Set(form.levels.flatMap((l) => l.rooms.map((r) => String(r.room_number).trim().toUpperCase())));
+
+const roomsOfType = (typeId) => form.levels.reduce((n, l) => n + l.rooms.filter((r) => r.room_type_id === typeId).length, 0);
+
+const addLevel = () => form.levels.push({ uid: ++uid, open: true, bulk: null, id: null, name: `Level ${form.levels.length + 1}`, rooms: [] });
+
+const removeLevel = async (i) => {
+    const level = form.levels[i];
+    if (level.rooms.length) {
+        const { isConfirmed } = await Swal.fire({
+            title: `Remove ${level.name || 'this level'}?`,
+            text: `Its ${level.rooms.length} room(s) are removed too when you save.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, remove it',
+            confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
+            cancelButtonColor: '#6c757d',
+        });
+        if (!isConfirmed) return;
+    }
+    form.levels.splice(i, 1);
+};
+
+// next free number: after the level's highest number (105 -> 106), or 101 / 201... for an empty level
+const nextRoomNumber = (level, i) => {
+    const used = usedNumbers();
+    const numbers = level.rooms.map((r) => parseInt(r.room_number, 10)).filter((n) => !Number.isNaN(n));
+    let n = numbers.length ? Math.max(...numbers) + 1 : (i + 1) * 100 + 1;
+    while (used.has(String(n))) n++;
+    return String(n);
+};
+
+const newRoom = (number, roomTypeId = '') => ({ uid: ++uid, id: null, room_number: number, room_type_id: roomTypeId, status: 'available' });
+
+const addRoom = (level, i) => level.rooms.push(newRoom(nextRoomNumber(level, i)));
+
+// "Add many rooms": numbers from -> to (numbers already used are skipped)
+const openRoomRange = (level, i) => {
+    const from = parseInt(nextRoomNumber(level, i), 10);
+    level.bulk = { from: String(from), to: String(from + 9), room_type_id: '', error: '' };
+};
+
+const addRoomRange = (level) => {
+    const from = parseInt(level.bulk.from, 10);
+    const to = parseInt(level.bulk.to, 10);
+    if (Number.isNaN(from) || Number.isNaN(to) || to < from) { level.bulk.error = 'Enter two numbers, e.g. 101 to 110.'; return; }
+    if (to - from >= 100) { level.bulk.error = 'Up to 100 rooms at a time.'; return; }
+
+    const used = usedNumbers();
+    for (let n = from; n <= to; n++) {
+        if (!used.has(String(n))) level.rooms.push(newRoom(String(n), level.bulk.room_type_id));
+    }
+    level.bulk = null;
+};
+
 // Files are already uploaded by FilePond, so this is a normal JSON request.
 const submit = () => {
     form
         .transform((data) => ({
             ...data,
+            levels: data.levels.map((l) => ({
+                id: l.id, name: l.name,
+                rooms: l.rooms.map((r) => ({ id: r.id, room_number: r.room_number, room_type_id: r.room_type_id || null, status: r.status })),
+            })),
+            faqs: data.faqs.map(({ question, answer }) => ({ question, answer })),
             photo: data.photo.map(({ id, upload }) => ({ id: id ?? null, upload: upload ?? null })),
         }))
         [isEdit.value ? 'put' : 'post'](props.submitUrl, {
             preserveScroll: true,
             // jump to the first tab that has a problem
-            onError: () => { tab.value = tabs.value.find((t) => t.errors)?.key ?? tab.value; },
+            onError: () => {
+                tab.value = tabs.value.find((t) => t.errors)?.key ?? tab.value;
+                form.levels.forEach((level, i) => { if (hasErrorUnder(`levels.${i}.`)) level.open = true; });
+                form.faqs.forEach((faq, i) => { if (hasErrorUnder(`faqs.${i}.`)) faq.open = true; });
+            },
         });
 };
 </script>

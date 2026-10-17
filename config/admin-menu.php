@@ -21,10 +21,12 @@ return [
         'active' => 'admin/dashboard*',
     ],
     [
-        'label'  => 'Hotels',
-        'icon'   => 'fas fa-building',
-        'url'    => '/admin/hotels',
-        'active' => 'admin/hotels*',
+        'label'    => 'Hotels',
+        'icon'     => 'fas fa-building',
+        'children' => [
+            ['label' => 'Hotels',           'url' => '/admin/hotels',           'active' => 'admin/hotels*'],
+            ['label' => 'Hotel Facilities', 'url' => '/admin/hotel-facilities', 'active' => 'admin/hotel-facilities*'],
+        ],
     ],
     [
         'label'    => 'Rooms',
@@ -38,19 +40,19 @@ return [
     [
         'label'  => 'Bookings',
         'icon'   => 'fas fa-calendar-alt',
-        'url'    => '#',
+        'url'    => '/admin/bookings',
         'active' => 'admin/bookings*',
     ],
     [
         'label'  => 'Customers',
         'icon'   => 'fas fa-user-friends',
-        'url'    => '#',
+        'url'    => '/admin/customers',
         'active' => 'admin/customers*',
     ],
     [
         'label'  => 'Payments',
         'icon'   => 'fas fa-money-check-alt',
-        'url'    => '#',
+        'url'    => '/admin/payments',
         'active' => 'admin/payments*',
     ],
     [

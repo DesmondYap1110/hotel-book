@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
+/** Rooms › Room Types. */
 class RoomTypeList extends Datatable
 {
     public function columns(): array
@@ -17,9 +18,10 @@ class RoomTypeList extends Datatable
             Column::make('image', 'Image')->image()->width('110px'),
             Column::make('name', 'Name')->sortable()->searchable(),
             Column::make('beds', 'Bed')->badge(),
-            Column::make('guests', 'People'),
-            Column::make('quantity', 'Quantity')->sortable()->center()->width('110px'),
-            Column::make('action', 'Action')->actions()->width('170px'),
+            Column::make('guests', 'Guests')->width('170px'),
+            Column::make('facilities_count', 'Facilities')->sortable()->center()->width('110px'),
+            Column::make('rooms_count', 'Rooms')->sortable()->center()->width('100px'),
+            Column::make('action', 'Action')->actions(),
         ];
     }
 
@@ -30,34 +32,28 @@ class RoomTypeList extends Datatable
 
     public function query(Request $request): Builder
     {
-        return RoomType::query()->with('roomImages');
+        // first photo only + two counts: one query each, no per-row queries
+        return RoomType::query()
+            ->with(['roomImages' => fn ($q) => $q->select('id', 'room_type_id', 'images', 'sort_order')])
+            ->withCount('facilities', 'rooms');
     }
 
     /** @param RoomType $type */
     public function row(Model $type): array
     {
-        $image = $type->roomImages->first();
-
         return [
-            'image'    => $image ? asset('storage/room_images/'.$image->images) : asset('images/empty.jpg'),
-            'name'     => $type->name,
-            'beds'     => $this->beds($type),
-            'guests'   => trim(($type->max_adult ? "{$type->max_adult} adult " : '').($type->max_child ? "{$type->max_child} child" : '')) ?: '-',
-            'quantity' => $type->quantity,
-            'action'   => $this->actions()
-                ->view(route('admin.room-types.show', $type))
+            'image'            => $type->roomImages->first()?->url ?? '/images/empty.jpg',
+            'name'             => $type->name,
+            'beds'             => collect(RoomType::BEDS)
+                ->filter(fn ($label, $column) => $type->{$column} > 0)
+                ->map(fn ($label, $column) => $this->badge("{$label} × {$type->{$column}}"))
+                ->values()->all(),
+            'guests'           => "{$type->max_adult} adult(s)".($type->max_child ? ", {$type->max_child} child(ren)" : ''),
+            'facilities_count' => $type->facilities_count,
+            'rooms_count'      => $type->rooms_count,
+            'action'           => $this->actions()
                 ->edit(route('admin.room-types.edit', $type))
-                ->delete(route('room-types.destroy', $type), $type->name),
+                ->delete(route('admin.room-types.destroy', $type), $type->name),
         ];
-    }
-
-    /** One badge per bed size the room has. */
-    private function beds(RoomType $type): array
-    {
-        return collect(['single_bed' => 'Single', 'queen_bed' => 'Queen', 'king_bed' => 'King'])
-            ->filter(fn ($label, $field) => $type->{$field})
-            ->map(fn ($label, $field) => $this->badge("{$label} × {$type->{$field}}"))
-            ->values()
-            ->all();
     }
 }

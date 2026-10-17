@@ -21,7 +21,8 @@
         <div class="cl-tabs__side">
             <div v-if="$slots.header" class="cl-tabs__header"><slot name="header" /></div>
 
-            <nav class="cl-tabs__nav" aria-label="Sections">
+            <!-- scrolls when there are more tabs than fit (down on desktop, sideways on phones) -->
+            <nav ref="nav" class="cl-tabs__nav" aria-label="Sections">
                 <button
                     v-for="tab in tabs"
                     :key="tab.key"
@@ -49,7 +50,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { ref, watch, nextTick, onMounted } from 'vue';
 
 const props = defineProps({
     tabs: { type: Array, required: true },       // [{ key, label, icon, errors }]
@@ -67,9 +68,25 @@ const select = (key) => {
     }
 };
 
+// keep the open tab visible inside the (scrolling) menu - only the menu scrolls, not the page
+const nav = ref(null);
+const showActive = (smooth = true) => {
+    const list = nav.value;
+    const item = list?.querySelector('.cl-tabs__item.is-active');
+    if (!item) return;
+    const sideways = list.scrollWidth > list.clientWidth; // phones: horizontal strip
+    list.scrollTo(sideways
+        ? { left: item.offsetLeft - (list.clientWidth - item.offsetWidth) / 2, behavior: smooth ? 'smooth' : 'auto' }
+        : { top: item.offsetTop - (list.clientHeight - item.offsetHeight) / 2, behavior: smooth ? 'smooth' : 'auto' });
+};
+let animate = false; // jump straight there on page load, glide on clicks
+watch(() => props.modelValue, () => nextTick(() => showActive(animate)));
+
 // open the tab from the URL (#gallery) after a refresh
 onMounted(() => {
     const fromUrl = location.hash.slice(1);
     if (props.rememberInUrl && props.tabs.some((t) => t.key === fromUrl)) emit('update:modelValue', fromUrl);
+    // after the page has laid out (editors etc. change heights)
+    setTimeout(() => { showActive(false); animate = true; }, 150);
 });
 </script>

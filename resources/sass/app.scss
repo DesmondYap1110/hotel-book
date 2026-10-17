@@ -28,10 +28,12 @@
 @use 'components/record-switcher';
 @use 'components/group-table';
 @use 'components/modal';
+@use 'components/accordion';
 
 // 4. Layouts (page skeletons)
 @use 'layouts/auth';
 @use 'layouts/admin';
+@use 'layouts/public';   // customer booking site
 
 // 5. Utilities (last, so they win)
 @use 'utilities/spacing';

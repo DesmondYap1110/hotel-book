@@ -118,7 +118,7 @@ const layoutOptions = isAvatar
         styleButtonRemoveItemPosition: 'center bottom',
         styleButtonProcessItemPosition: 'center bottom',
     }
-    : { imagePreviewHeight: 140, styleItemPanelAspectRatio: 0.7 };
+    : { imagePreviewHeight: 140, styleItemPanelAspectRatio: '0.7' };
 
 // ---------- what FilePond shows first ----------
 // server mode: existing files from the database (loaded by URL)

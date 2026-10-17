@@ -16,7 +16,7 @@ __webpack_require__.r(__webpack_exports__);
   props: {
     table: Object,
     // Datatable::props(...)
-    createUrl: String
+    hotelsUrl: String
   },
   setup: function setup(__props, _ref) {
     var __expose = _ref.expose;
@@ -45,7 +45,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
-  "class": "fas fa-plus"
+  "class": "fas fa-hotel"
+}, null, -1 /* HOISTED */);
+var _hoisted_2 = {
+  "class": "cl-note"
+};
+var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+  "class": "fas fa-exclamation-circle"
 }, null, -1 /* HOISTED */);
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
@@ -60,17 +66,24 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, {
     actions: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
-        href: $props.createUrl,
+        href: $props.hotelsUrl,
         "class": "cl-btn cl-btn--primary"
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Add Room")];
+          return [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Manage in Hotels")];
         }),
         _: 1 /* STABLE */
       }, 8 /* PROPS */, ["href"])];
     }),
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ui_data_table, {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Rooms are added per hotel: open a hotel in "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+        href: $props.hotelsUrl
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Hotels")];
+        }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["href"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" › Rooms tab, add its levels, then the rooms.")])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ui_data_table, {
         server: $props.table
       }, null, 8 /* PROPS */, ["server"])];
     }),

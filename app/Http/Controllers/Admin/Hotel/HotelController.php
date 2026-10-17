@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\HotelRequest;
 use App\Models\Hotel;
 use App\Models\PaymentMethod;
-use App\Models\RoomFacility;
+use App\Models\Room;
+use App\Models\HotelFacility;
+use App\Models\RoomType;
 use App\Support\TempUpload;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -73,7 +75,7 @@ class HotelController extends Controller
 
     public function edit(Hotel $hotel)
     {
-        return $this->form($hotel->load('nearbyPlaces', 'facilities'));
+        return $this->form($hotel->load('nearbyPlaces', 'facilities', 'faqs', 'levels.rooms', 'rates'));
     }
 
     public function update(HotelRequest $request, Hotel $hotel)
@@ -121,7 +123,7 @@ class HotelController extends Controller
                     'id', 'type', 'status', 'name', 'brand', 'tagline', 'description', 'star_rating',
                     'legal_name', 'registration_no',
                     'address_line1', 'address_line2', 'city', 'state', 'postcode', 'country',
-                    'latitude', 'longitude', 'map_url',
+                    'map_url',
                     'email', 'website', 'reception_hours', 'late_arrival_note',
                     'cancellation_policy', 'house_rules',
                     'parking_fee', 'parking_clearance', 'parking_notes',
@@ -134,6 +136,14 @@ class HotelController extends Controller
                 'payment_methods'   => $hotel->payment_methods ?? [],
                 'facility_ids'      => $hotel->exists ? $hotel->facilities->pluck('id') : [],
                 'nearby_places'     => $hotel->exists ? $hotel->nearbyPlaces->map->only('name', 'category', 'distance_km') : [],
+                // { room_type_id: price } (object so the browser keeps the ids as keys)
+                'rates'             => (object) ($hotel->exists ? $hotel->rates->pluck('price', 'room_type_id')->all() : []),
+                'levels'            => $hotel->exists ? $hotel->levels->map(fn ($level) => [
+                    'id'    => $level->id,
+                    'name'  => $level->name,
+                    'rooms' => $level->rooms->map->only('id', 'room_number', 'room_type_id', 'status'),
+                ]) : [],
+                'faqs'              => $hotel->exists ? $hotel->faqs->map->only('question', 'answer') : [],
                 // FilePond list: [] = no photo yet, [{ id: 'current', url }] = existing photo
                 'photo'             => $hotel->photo_path ? [['id' => 'current', 'url' => $hotel->photo_url]] : [],
                 'photo_placeholder' => '/images/hotel-placeholder.svg',
@@ -159,7 +169,9 @@ class HotelController extends Controller
                 'paymentMethods'  => $this->paymentMethodGroups($hotel),
                 'placeCategories' => $this->options(Hotel::PLACE_CATEGORIES),
                 'socialNetworks'  => Hotel::SOCIAL_NETWORKS,
-                'facilities'      => $this->facilityGroups(),
+                'facilities'      => HotelFacility::grouped(),
+                'roomTypes'       => RoomType::orderBy('name')->get(['id', 'name'])->map(fn ($t) => ['value' => $t->id, 'label' => $t->name]),
+                'roomStatuses'    => $this->options(Room::STATUSES),
             ],
             'submitUrl' => $hotel->exists ? route('admin.hotels.update', $hotel) : route('admin.hotels.store'),
             'backUrl'   => route('admin.hotels.index'),
@@ -169,7 +181,7 @@ class HotelController extends Controller
     /** Plain columns from the request. Branches always belong to the HQ. */
     private function attributes(HotelRequest $request): array
     {
-        $data = $request->safe()->except(['phones', 'social_links', 'facility_ids', 'nearby_places', 'photo']);
+        $data = $request->safe()->except(['phones', 'social_links', 'facility_ids', 'nearby_places', 'faqs', 'levels', 'rates', 'photo']);
 
         $data['parent_id'] = $data['type'] === Hotel::TYPE_BRANCH ? Hotel::hq()?->id : null;
         $data['phones'] = array_values(array_filter($request->input('phones', []), fn ($p) => ! empty($p['number'])));
@@ -195,7 +207,85 @@ class HotelController extends Controller
             ]);
         }
 
+        $hotel->faqs()->delete();
+        foreach (array_values($request->input('faqs', [])) as $i => $faq) {
+            $hotel->faqs()->create([
+                'question'   => $faq['question'],
+                'answer'     => $faq['answer'] ?? null,
+                'sort_order' => $i,
+            ]);
+        }
+
+        $this->saveRooms($hotel, $request->input('levels', []));
+        $this->saveRates($hotel, $request->input('rates', []));
+
         $this->savePhoto($hotel, $request->input('photo', []));
+    }
+
+    /**
+     * Levels + rooms from the Rooms tab. Rows are updated in place (not deleted and re-added),
+     * so a room keeps its id - bookings will point at it later.
+     *   [{ id|null, name, rooms: [{ id|null, room_number, room_type_id, status }] }]
+     */
+    private function saveRooms(Hotel $hotel, array $levels): void
+    {
+        $levels = array_values($levels);
+        $keepRooms = collect($levels)->flatMap(fn ($l) => array_column($l['rooms'] ?? [], 'id'))->filter()->all();
+
+        // rooms removed in the form -> delete
+        $hotel->rooms()->whereNotIn('id', $keepRooms)->delete();
+
+        // rooms whose number changed get a temporary one first, so swapping 101 <-> 102 doesn't hit the unique index
+        $current = $hotel->rooms()->pluck('room_number', 'id');
+        $renamed = collect($levels)->flatMap(fn ($l) => $l['rooms'] ?? [])
+            ->filter(fn ($r) => ! empty($r['id']) && ($current[$r['id']] ?? null) !== $r['room_number'])
+            ->pluck('id');
+        if ($renamed->isNotEmpty()) {
+            $hotel->rooms()->whereIn('id', $renamed)->update(['room_number' => DB::raw("CONCAT('~', id)")]);
+        }
+
+        $keepLevels = [];
+        foreach ($levels as $i => $data) {
+            $level = $this->upsert($hotel->levels(), $data['id'] ?? null, ['name' => $data['name'], 'sort_order' => $i]);
+            $keepLevels[] = $level->id;
+
+            foreach (array_values($data['rooms'] ?? []) as $j => $room) {
+                $this->upsert($hotel->rooms(), $room['id'] ?? null, [
+                    'hotel_level_id' => $level->id,    // a room can move to another level
+                    'room_number'    => $room['room_number'],
+                    'room_type_id'   => $room['room_type_id'] ?: null,
+                    'status'         => $room['status'],
+                    'sort_order'     => $j,
+                ]);
+            }
+        }
+
+        // levels removed in the form -> delete last (their rooms were deleted or moved above)
+        $hotel->levels()->whereNotIn('id', $keepLevels)->delete();
+    }
+
+    /** { room_type_id: price }. Empty price = the type is not sold at this hotel (row removed). */
+    private function saveRates(Hotel $hotel, array $rates): void
+    {
+        $prices = array_filter($rates, fn ($price) => $price !== null && $price !== '');
+
+        $hotel->rates()->whereNotIn('room_type_id', array_keys($prices))->delete();
+        foreach ($prices as $typeId => $price) {
+            $hotel->rates()->updateOrCreate(['room_type_id' => $typeId], ['price' => round((float) $price, 2)]);
+        }
+    }
+
+    /** Update the row with this id, or create a new one when id is empty. */
+    private function upsert($relation, $id, array $values)
+    {
+        if ($id) {
+            $model = $relation->findOrFail($id);
+            $model->update($values);
+
+            return $model;
+        }
+
+        return $relation->create($values);
     }
 
     /**
@@ -252,21 +342,6 @@ class HotelController extends Controller
                 'disabled' => ! $m->is_enabled, // switched off in Settings but still on this hotel
             ])->values()])
             ->filter(fn ($cat) => $cat['items']->isNotEmpty())
-            ->values()
-            ->all();
-    }
-
-    /** Facilities grouped by category ("Hotel Services" first) - one query, grouped in PHP. */
-    private function facilityGroups(): array
-    {
-        $byCategory = RoomFacility::orderBy('name')->get(['id', 'name', 'category'])->groupBy('category');
-
-        return collect(RoomFacility::CATEGORIES)
-            ->filter(fn ($label, $key) => $byCategory->has($key))
-            ->map(fn ($label, $key) => [
-                'label' => $label,
-                'items' => $byCategory[$key]->map->only('id', 'name')->values(),
-            ])
             ->values()
             ->all();
     }
