@@ -84,8 +84,8 @@
 
                 <div class="row">
                     <div class="col-md-12  text-right">
-                        <button type="button"  class="btn btn-primary" @click="resetForm()">Cancel</button>
-                        <button type="button" :disabled="form.quantity > computedAvailableQuantity" @click="submitForm" class="btn btn-warning ml-2">Save</button>
+                        <button type="button"  class="cl-btn cl-btn--light" @click="resetForm()">Cancel</button>
+                        <button type="button" :disabled="form.quantity > computedAvailableQuantity" @click="submitForm" class="cl-btn cl-btn--primary ml-2">Save</button>
                     </div>
                 </div>
             </form>

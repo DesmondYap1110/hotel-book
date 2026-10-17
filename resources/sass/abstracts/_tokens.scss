@@ -1,0 +1,96 @@
+// =============================================================
+// DESIGN TOKENS  -  the single source of truth for the look.
+// Change a value here and the whole site follows.
+// Each token is also exported as a CSS variable (see :root below),
+// so you can re-theme at runtime:  .theme-dark { --color-primary: #000; }
+// =============================================================
+
+// ---- Colors ---------------------------------------------------
+// Add a color here and it becomes --color-<name>.
+$colors: (
+  'primary':      #f2192e,   // brand red
+  'primary-dark': #c9101f,   // hover state of primary
+  'crimson':      #9b0f1c,   // deep red for text/accents
+  'dark':         #1a1a1a,   // main text
+  'dark-hover':   #333333,
+  'gold':         #ffc34d,   // accent
+  'danger':       #dc3545,
+  'success':      #28a745,
+  'muted':        #666666,
+  'surface':      #ffffff,   // cards
+  'field':        #ececf2,   // input background
+  'navy':         #061a40,   // sidebar top
+  'ink':          #1d1030,   // table header, dark surfaces
+  'border':       #e7e5ee,   // lines and dividers
+  'page':         #f5f4f8,   // admin page background
+  'stripe':       #faf9fc,   // zebra rows
+  'sidebar-text': #c8c2d6,   // muted text on dark sidebar
+) !default;
+
+// Which colors get a button variant: name -> (background, hover background, text)
+// Add one line here and a new .cl-btn--<name> exists.
+$btn-variants: (
+  'primary': ('primary', 'primary-dark', 'surface'),
+  'dark':    ('dark',    'dark-hover',   'surface'),
+  'danger':  ('danger',  'danger',       'surface'),
+  'success': ('success', 'success',      'surface'),
+  'light':   ('field',   'border',       'dark'),
+) !default;
+
+// ---- Gradients -----------------------------------------------
+$gradients: (
+  'page': linear-gradient(200deg, #061a40 0%, #1d1030 38%, #3d0d28 70%, #5e0c22 100%),
+  'hero': linear-gradient(160deg, #f2192e 0%, #9b0f1c 55%, #2a0509 100%),
+  'sidebar': linear-gradient(180deg, #061a40 0%, #1d1030 55%, #3d0d28 100%),
+  'active': linear-gradient(90deg, #f2192e 0%, #9b0f1c 100%),
+) !default;
+
+// ---- Admin shell sizes ---------------------------------------
+$sidebar-width: 250px !default;
+$sidebar-width-collapsed: 70px !default;
+$topbar-height: 70px !default;
+$breadcrumb-height: 48px !default;
+$content-gutter: 24px !default;   // space between sidebar/edges and the page card
+
+// ---- Typography ----------------------------------------------
+$font-body: 'Poppins', sans-serif !default;
+
+// ---- Radius & spacing ----------------------------------------
+$radius: (
+  'sm': 12px,
+  'md': 18px,
+  'lg': 24px,
+) !default;
+
+// Spacing scale: step 1 = 4px ... step 6 = 24px (used by utilities & space())
+$space-unit: 4px !default;
+$space-steps: 0, 1, 2, 3, 4, 5, 6, 8 !default;
+
+// ---- Breakpoints (max-width) ---------------------------------
+$breakpoints: (
+  'sm': 576px,
+  'md': 720px,
+  'lg': 992px,
+) !default;
+
+// ---- Export tokens as CSS variables --------------------------
+:root {
+  @each $name, $value in $colors {
+    --color-#{$name}: #{$value};
+  }
+  // rgb triplet so we can write rgba(var(--color-primary-rgb), .3)
+  --color-primary-rgb: #{red(map-get($colors, 'primary'))}, #{green(map-get($colors, 'primary'))}, #{blue(map-get($colors, 'primary'))};
+
+  @each $name, $value in $gradients {
+    --gradient-#{$name}: #{$value};
+  }
+  @each $name, $value in $radius {
+    --radius-#{$name}: #{$value};
+  }
+  --font-body: #{$font-body};
+  --sidebar-width: #{$sidebar-width};
+  --sidebar-width-collapsed: #{$sidebar-width-collapsed};
+  --topbar-height: #{$topbar-height};
+  --breadcrumb-height: #{$breadcrumb-height};
+  --content-gutter: #{$content-gutter};
+}

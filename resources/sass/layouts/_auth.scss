@@ -1,0 +1,89 @@
+// AUTH LAYOUT  -  split card: form on the left, hero on the right.
+// Reuse it for login, forgot password, etc.
+//
+//   <body class="cl-auth">
+//     <div class="cl-card cl-auth__card">
+//       <div class="cl-auth__form"> ... </div>
+//       <div class="cl-auth__hero"> ... </div>
+//     </div>
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+.cl-auth {
+  @include m.flex-center;
+  min-height: 100vh;
+  padding: f.space(6);
+  background: var(--gradient-page) fixed;
+
+  &__card {
+    display: flex;
+    width: 100%;
+    max-width: 860px;
+    padding: 8px;
+  }
+
+  &__form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 32px 36px;
+  }
+
+  &__logo {
+    display: block;
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 10px;
+  }
+
+  &__brand {
+    margin-bottom: 18px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    color: f.color('crimson');
+  }
+
+  &__title {
+    margin-bottom: f.space(6);
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: f.color('dark');
+  }
+
+  &__hero {
+    position: relative;
+    flex: 1;
+    min-height: 420px;
+    padding: 32px;
+    overflow: hidden;
+    border-radius: f.radius('md');
+    background: var(--gradient-hero);
+    color: #fff;
+    text-align: left;
+
+    > * { position: relative; z-index: 1; }
+
+    h2 { margin: 8px 0; font-size: 26px; font-weight: 600; }
+    p  { max-width: 280px; margin: 0; font-size: 14px; line-height: 1.6; color: #ffe3e5; }
+  }
+
+  // decorative SVG pinned to the bottom of the hero
+  &__hero-art {
+    position: absolute !important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 62%;
+  }
+
+  // phones: hide the hero, tighten the form
+  @include m.respond-to('md') {
+    &__hero { display: none; }
+    &__form { padding: 28px 20px; }
+  }
+}

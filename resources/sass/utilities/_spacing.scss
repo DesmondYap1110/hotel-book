@@ -1,0 +1,16 @@
+// Spacing helpers generated from the scale:  .u-mt-2, .u-mb-4, .u-p-3 ...
+// Use for one-off tweaks instead of writing new CSS.
+@use '../abstracts/tokens' as t;
+@use '../abstracts/functions' as f;
+
+$sides: ('t': 'top', 'b': 'bottom', 'l': 'left', 'r': 'right');
+
+@each $step in t.$space-steps {
+  .u-m-#{$step} { margin: f.space($step) !important; }
+  .u-p-#{$step} { padding: f.space($step) !important; }
+
+  @each $key, $side in $sides {
+    .u-m#{$key}-#{$step} { margin-#{$side}: f.space($step) !important; }
+    .u-p#{$key}-#{$step} { padding-#{$side}: f.space($step) !important; }
+  }
+}

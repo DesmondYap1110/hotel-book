@@ -1,0 +1,42 @@
+// PAGE CARD  -  white panel with a title bar.  Vue: <ui-page-card title="...">
+//   <section class="cl-page-card">
+//     <header class="cl-page-card__header">
+//       <h1 class="cl-page-card__title">Services &amp; Packages</h1>
+//       <div class="cl-page-card__actions"> buttons </div>
+//     </header>
+//     <div class="cl-page-card__body"> ... </div>
+//   </section>
+@use '../abstracts/functions' as f;
+
+.cl-page-card {
+  background: f.color('surface');
+  border-radius: 4px;
+  box-shadow: 0 4px 18px rgba(29, 16, 48, 0.06);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: f.space(3);
+    min-height: 72px;
+    padding: f.space(3) 15px;
+    border-bottom: 1px dashed f.color('border');
+  }
+
+  &__title {
+    flex: 1;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: f.color('ink');
+  }
+
+  &__actions {
+    display: flex;
+    gap: f.space(2);
+  }
+
+  &__body {
+    padding: 24px 15px 24px;
+  }
+}

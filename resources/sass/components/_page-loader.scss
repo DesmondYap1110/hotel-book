@@ -1,0 +1,67 @@
+// PAGE LOADER  -  full-screen spinner while a page loads.
+// Markup: resources/views/partials/page-loader.blade.php
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+.cl-page-loader {
+  @include m.flex-center;
+  flex-direction: column;
+  gap: f.space(4);
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(245, 244, 248, 0.92);
+  backdrop-filter: blur(2px);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+  &.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  &__spinner {
+    position: relative;
+    width: 76px;
+    height: 76px;
+  }
+
+  // the rotating circle: red arc on a light track
+  &__ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 4px solid rgba(var(--color-primary-rgb), 0.15);
+    border-top-color: var(--color-primary);
+    border-right-color: var(--color-crimson);
+    animation: cl-spin 0.9s linear infinite;   // keyframes live in _data-table.scss
+  }
+
+  &__logo {
+    position: absolute;
+    inset: 14px;
+    width: calc(100% - 28px);
+    height: calc(100% - 28px);
+    object-fit: contain;
+    animation: cl-pulse 1.8s ease-in-out infinite;
+  }
+
+  &__text {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: f.color('ink');
+  }
+
+  // slower, calmer animation for people who prefer less motion
+  @media (prefers-reduced-motion: reduce) {
+    &__ring { animation-duration: 2.5s; }
+    &__logo { animation: none; }
+  }
+}
+
+@keyframes cl-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(0.9); opacity: 0.75; }
+}

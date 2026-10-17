@@ -1,0 +1,45 @@
+// ICON BUTTON  -  round button with only an icon (table actions).
+//   <button class="cl-icon-btn cl-icon-btn--primary" title="Edit"><i class="fas fa-pen"></i></button>
+// Colors come from $btn-variants in abstracts/_tokens.scss (same as .cl-btn).
+@use '../abstracts/tokens' as t;
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+.cl-icon-btn {
+  @include m.flex-center;
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s, background-color 0.2s;
+
+  &:hover { transform: translateY(-1px); }
+  &:focus { @include m.focus-ring; }
+
+  &--sm { width: 28px; height: 28px; font-size: 11px; }
+
+  & + & { margin-left: f.space(2); }
+}
+
+@each $name, $parts in t.$btn-variants {
+  .cl-icon-btn--#{$name} {
+    background: f.color(nth($parts, 1));
+    color: f.color(nth($parts, 3));
+
+    &:hover { background: f.color(nth($parts, 2)); color: f.color(nth($parts, 3)); }
+  }
+}
+
+// soft variant: tinted background, fills in on hover (used for Delete)
+.cl-icon-btn--soft-danger {
+  background: rgba(220, 53, 69, 0.12);
+  color: f.color('danger');
+  box-shadow: none;
+
+  &:hover { background: f.color('danger'); color: #fff; }
+}

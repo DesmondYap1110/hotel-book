@@ -1,0 +1,79 @@
+// FORM FIELD
+//   <div class="cl-field">
+//     <label class="cl-field__label" for="email">Email</label>
+//     <input class="cl-input is-invalid" id="email">
+//     <div class="cl-field__error">Message</div>
+//   </div>
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+.cl-field {
+  position: relative;
+  margin-bottom: 18px;
+
+  &__label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: f.color('dark');
+  }
+
+  &__error {
+    margin-top: 6px;
+    font-size: 13px;
+    color: f.color('danger');
+  }
+
+  // small icon button placed inside the input (e.g. show/hide password)
+  &__action {
+    position: absolute;
+    right: 14px;
+    top: 38px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: f.color('muted');
+    cursor: pointer;
+  }
+}
+
+.cl-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 f.space(4);
+  border: 0;
+  border-radius: f.radius('sm');
+  background: f.color('field');
+  font-size: 15px;
+  color: f.color('dark');
+
+  &:focus { @include m.focus-ring; }
+  &.is-invalid { box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.4); }
+}
+
+// row of form buttons (Save / Cancel)
+.cl-form-actions {
+  display: flex;
+  gap: f.space(2);
+  margin-top: f.space(6);
+}
+
+// select uses the same look as inputs, with room for the arrow
+select.cl-input { padding-right: f.space(8); }
+
+// checkbox + label on one line
+.cl-check {
+  display: flex;
+  align-items: center;
+  gap: f.space(2);
+  margin: 6px 0 22px;
+  font-size: 14px;
+  font-weight: 500;
+
+  input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-primary);
+  }
+}

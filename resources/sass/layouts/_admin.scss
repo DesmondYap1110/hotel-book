@@ -1,0 +1,389 @@
+// ADMIN SHELL  -  sidebar + topbar + content + footer.
+// Markup lives in resources/views/admin/layouts/app.blade.php and partials.
+//
+//   <body class="cl-admin">                 add .cl-admin--collapsed for icon-only sidebar
+//     <aside class="cl-sidebar"> ... </aside>
+//     <div class="cl-admin__main">
+//       <header class="cl-topbar"> ... </header>
+//       <main class="cl-admin__content"> ... </main>
+//       <footer class="cl-admin__footer"> ... </footer>
+//     </div>
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+.cl-admin {
+  min-height: 100vh;
+  margin: 0;
+  background: f.color('page');
+  font-family: var(--font-body);
+  color: f.color('dark');
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin-left: var(--sidebar-width);
+    transition: margin-left 0.25s;
+  }
+
+  &__content {
+    flex: 1;
+    padding: 16px var(--content-gutter);
+  }
+
+  &__footer {
+    padding: f.space(5);
+    text-align: center;
+    font-size: 12.5px;
+    color: f.color('muted');
+  }
+
+  // ---- collapsed: icon-only sidebar ----
+  &--collapsed {
+    .cl-admin__main { margin-left: var(--sidebar-width-collapsed); }
+    .cl-sidebar { width: var(--sidebar-width-collapsed); }
+    .cl-sidebar__brand-full,
+    .cl-sidebar__label,
+    .cl-sidebar__arrow { display: none; }
+    .cl-sidebar__brand-mark { display: block; }
+    // hide sub links even when their group is open (beats .is-open > .cl-sidebar__submenu)
+    .cl-sidebar .cl-sidebar__item .cl-sidebar__submenu { display: none; }
+    .cl-sidebar__item { margin-bottom: 0; }
+    .cl-sidebar__link { justify-content: center; height: 50px; padding: 0; }
+    .cl-sidebar__icon { width: 22px; font-size: 18px; }
+  }
+
+  // ---- phones: sidebar slides over the page ----
+  @include m.respond-to('lg') {
+    .cl-admin__main { margin-left: 0 !important; }
+    .cl-sidebar { transform: translateX(-100%); width: var(--sidebar-width) !important; }
+    &__content { padding: 12px; }
+
+    // menu button: arrow while the menu is hidden, bars while it is open
+    .cl-topbar__icon-open { display: none !important; }
+    .cl-topbar__icon-collapsed { display: block !important; }
+    &--mobile-open .cl-topbar__icon-open { display: block !important; }
+    &--mobile-open .cl-topbar__icon-collapsed { display: none !important; }
+
+    &--mobile-open {
+      .cl-sidebar { transform: none; }
+      .cl-admin__backdrop { display: block; }
+    }
+    // on phones "collapsed" has no meaning, always show labels
+    &--collapsed {
+      .cl-sidebar__brand-full,
+      .cl-sidebar__label,
+      .cl-sidebar__arrow { display: initial; }
+      .cl-sidebar__brand-mark { display: none; }
+      .cl-sidebar .cl-sidebar__item.is-open .cl-sidebar__submenu { display: block; }
+      .cl-sidebar__item { margin-bottom: 1px; }
+      .cl-sidebar__link { justify-content: flex-start; height: 45px; padding: 0 12px; }
+      .cl-sidebar__icon { width: 20px; font-size: 15px; }
+    }
+  }
+
+  &__backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1030;
+    background: rgba(0, 0, 0, 0.4);
+  }
+}
+
+// ---------------------------------------------------------------
+// SIDEBAR
+// ---------------------------------------------------------------
+.cl-sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  display: flex;
+  flex-direction: column;
+  width: var(--sidebar-width);
+  background: var(--gradient-sidebar);
+  color: #fff;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: width 0.25s, transform 0.25s;
+
+  &__brand {
+    @include m.flex-center;
+    gap: f.space(3);
+    flex-shrink: 0;
+    height: var(--topbar-height);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 6px 12px -8px rgba(242, 25, 46, 0.6);
+    color: #fff;
+    text-decoration: none;
+
+    &:hover { color: #fff; text-decoration: none; }
+    img { width: 42px; height: 42px; }
+  }
+
+  &__brand-full {
+    display: flex;
+    align-items: center;
+    gap: f.space(3);
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+
+  &__brand-mark { display: none; }
+
+  &__nav {
+    list-style: none;
+    margin: 0;
+    padding: 28px 0;
+  }
+
+  &__item { margin-bottom: 1px; }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: f.space(3);
+    height: 45px;
+    padding: 0 12px;
+    margin-right: 10px;
+    border-radius: 0 999px 999px 0;   // pill with flat left side
+    color: f.color('sidebar-text');
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+
+    &:hover { color: #fff; background: rgba(255, 255, 255, 0.06); text-decoration: none; }
+  }
+
+  &__icon {
+    width: 20px;
+    text-align: center;
+    font-size: 15px;
+  }
+
+  &__label { flex: 1; white-space: nowrap; }
+
+  &__arrow {
+    font-size: 10px;
+    transition: transform 0.2s;
+  }
+
+  // active parent or active single link
+  &__item.is-active > &__link {
+    background: var(--gradient-active);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 6px 16px rgba(242, 25, 46, 0.35);
+  }
+
+  // open group: rotate the arrow, show children
+  &__item.is-open > &__link &__arrow { transform: rotate(90deg); }
+  &__item.is-open > &__submenu { display: block; }
+
+  &__submenu {
+    display: none;
+    list-style: none;
+    margin: 4px 0 8px;
+    padding: 0 0 0 14px;
+  }
+
+  &__sublink {
+    display: flex;
+    align-items: center;
+    gap: f.space(3);
+    height: 32px;
+    padding: 0 f.space(1);
+    color: f.color('sidebar-text');
+    font-size: 12.5px;
+    font-weight: 500;
+    text-decoration: none;
+
+    &::before { content: '-'; opacity: 0.7; }
+    &:hover { color: #fff; text-decoration: none; }
+    &.is-active { color: #fff; font-weight: 600; }
+  }
+}
+
+// ---------------------------------------------------------------
+// TOPBAR
+// ---------------------------------------------------------------
+.cl-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  display: flex;
+  align-items: center;
+  gap: f.space(4);
+  height: var(--topbar-height);
+  padding: 0 20px;
+  background: f.color('surface');
+  border-bottom: 1px solid f.color('border');
+
+  &__spacer { flex: 1; }
+
+
+  &__btn {
+    @include m.flex-center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: f.color('dark');
+    cursor: pointer;
+
+    &:hover { color: f.color('primary'); }
+  }
+
+  // menu button: bars when sidebar is open, arrow when collapsed
+  &__btn[data-admin-toggle] { margin-left: -8px; }
+  &__btn[data-admin-toggle] .cl-line-icon { width: 24px; height: 24px; stroke-width: 2; }
+  &__icon-collapsed { display: none !important; }
+
+  .cl-admin--collapsed & {
+    .cl-topbar__icon-open { display: none !important; }
+    .cl-topbar__icon-collapsed { display: block !important; }
+  }
+
+  // ---- user menu ----
+  &__user { position: relative; }
+
+  &__user-toggle {
+    display: flex;
+    align-items: center;
+    gap: f.space(3);
+    padding: 6px 0 6px f.space(2);
+    border: 0;
+    background: transparent;
+    color: f.color('dark');
+    cursor: pointer;
+    text-align: left;
+  }
+
+  &__chevron { width: 16px; height: 16px; transition: transform 0.2s; }
+  &__user.is-open &__chevron { transform: rotate(180deg); }
+
+  &__user-name { display: block; font-size: 12.5px; font-weight: 600; color: f.color('dark'); line-height: 1.3; }
+  &__user-role { display: block; font-size: 11.5px; color: f.color('primary'); line-height: 1.3; }
+
+  &__menu {
+    display: none;
+    position: absolute;
+    right: -8px;
+    top: calc(100% + 10px);
+    min-width: 165px;
+    padding: f.space(2) 0;
+    background: f.color('surface');
+    border-radius: 8px;
+    box-shadow: 0 8px 28px rgba(29, 16, 48, 0.14);
+
+    &.is-open { display: block; }
+  }
+
+  &__menu-item {
+    display: flex;
+    align-items: center;
+    gap: f.space(3);
+    width: 100%;
+    padding: 9px f.space(4);
+    border: 0;
+    background: transparent;
+    color: f.color('muted');
+    font-size: 10px;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+
+    .cl-line-icon { width: 16px; height: 16px; }
+
+    &:hover { background: f.color('page'); color: f.color('primary'); text-decoration: none; }
+  }
+}
+
+// ---------------------------------------------------------------
+// LINE ICON  -  thin outline SVG that takes the text color.
+//   <svg class="cl-line-icon" viewBox="0 0 24 24"><path d="..."/></svg>
+// ---------------------------------------------------------------
+.cl-line-icon {
+  display: block;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &--bold { stroke-width: 2.6; stroke-linecap: square; stroke-linejoin: miter; }
+}
+
+// ---------------------------------------------------------------
+// PHONES / TABLETS (<= lg)
+// ---------------------------------------------------------------
+@include m.respond-to('lg') {
+  .cl-topbar {
+    height: 60px;
+    padding: 0 12px;
+    gap: f.space(2);
+
+    // no fullscreen on phones
+    [data-admin-fullscreen] { display: none; }
+
+    // user menu drops down across the full width, under the header
+    &__user { position: static; }
+    &__user-name { font-size: 12px; }
+    &__user-role { font-size: 11px; }
+
+    &__menu {
+      left: 0;
+      right: 0;
+      top: 100%;
+      min-width: 0;
+      border-radius: 0;
+      box-shadow: 0 10px 20px rgba(29, 16, 48, 0.1);
+    }
+
+    &__menu-item { padding: 12px 16px; }
+  }
+
+  .cl-breadcrumb { height: 40px; }
+}
+
+@include m.respond-to('sm') {
+  .cl-page-card {
+    &__header { min-height: 0; padding: 14px 12px; }
+    &__body { padding: 16px 12px; }
+  }
+
+  // table toolbar: stack "Show entries" and full-width search
+  .cl-table {
+    &__toolbar { flex-direction: column; align-items: stretch; }
+    &__search { width: 100%; }
+    &__search-input { flex: 1; width: auto; }
+    &__footer { flex-direction: column; align-items: flex-start; }
+  }
+
+  .cl-form-actions .cl-btn { flex: 1; }
+}
+
+// ---------------------------------------------------------------
+// Bootstrap leftovers: old screens still using .btn-primary get the brand colour.
+// New code should use .cl-btn instead.
+// ---------------------------------------------------------------
+.cl-admin .btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: var(--color-primary-dark) !important;
+    border-color: var(--color-primary-dark) !important;
+  }
+}

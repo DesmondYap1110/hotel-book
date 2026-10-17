@@ -33,22 +33,6 @@ const getRoomType = () =>{
 </script>
 
 <template>
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="/admin/dashboard">Home</a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="/admin/appointments">RoomTypes</a>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="content">
         <div class="container-fluid">

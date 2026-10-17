@@ -1,0 +1,17 @@
+// ALERT  -  <div class="cl-alert cl-alert--success">Saved!</div>
+// Variants: success, danger
+@use '../abstracts/functions' as f;
+
+.cl-alert {
+  margin-bottom: f.space(5);
+  padding: f.space(3) f.space(4);
+  border-left: 4px solid;
+  border-radius: 6px;
+  font-size: 14px;
+
+  &--success { border-color: f.color('success'); background: rgba(40, 167, 69, 0.08); color: #1e7b34; }
+  &--danger  { border-color: f.color('danger');  background: rgba(220, 53, 69, 0.08); color: #a71d2a; }
+}
+
+// keeps simple forms at a readable width
+.cl-form-narrow { max-width: 480px; }

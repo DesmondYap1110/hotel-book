@@ -1,0 +1,242 @@
+// DATA TABLE  -  Vue: <ui-data-table :columns :rows>
+// Toolbar (show N entries + search), table, footer (summary + pagination).
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+.cl-table {
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: f.space(3);
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+
+  &__length,
+  &__search {
+    display: flex;
+    align-items: center;
+    gap: f.space(2);
+  }
+
+  &__select,
+  &__search-input {
+    height: 30px;
+    padding: 0 f.space(2);
+    border: 1px solid f.color('border');
+    border-radius: 6px;
+    background: f.color('surface');
+    font-size: 13px;
+    color: f.color('dark');
+
+    &:focus { @include m.focus-ring(0.25); }
+  }
+
+  &__select { width: 72px; height: 28px; }
+  &__search-input { width: 200px; }
+
+  // horizontal scroll on small screens
+  &__wrap {
+    overflow-x: auto;
+    border: 1px solid f.color('border');
+  }
+
+  &__table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: 13px;
+
+    th {
+      position: relative;
+      height: 36px;
+      padding: 0 9px;
+      background: f.color('ink');
+      color: #fff;
+      font-weight: 600;
+      white-space: nowrap;
+      user-select: none;
+      border-right: 1px solid rgba(255, 255, 255, 0.12);
+
+      &:last-child { border-right: 0; }
+    }
+
+    td {
+      height: 54px;
+      padding: 5px 9px;
+      border-top: 1px solid f.color('border');
+      border-right: 1px solid f.color('border');
+      vertical-align: middle;
+
+      &:last-child { border-right: 0; }
+    }
+
+    tbody tr:nth-child(even) { background: f.color('stripe'); }
+    tbody tr:hover { background: rgba(var(--color-primary-rgb), 0.04); }
+  }
+
+  &__th--sortable { cursor: pointer; padding-right: 32px !important; }
+
+  &__sort {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    opacity: 0.5;
+
+    &.is-active { opacity: 1; color: f.color('primary'); }
+  }
+
+  &__empty {
+    padding: f.space(8) !important;
+    text-align: center;
+    color: f.color('muted');
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: f.space(3);
+    margin-top: 11px;
+    font-size: 13px;
+  }
+
+  // alignment helpers used by column.align
+  .is-center { text-align: center; }
+  .is-right { text-align: right; }
+}
+
+// simple loading spinner (reusable)
+.cl-spinner {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--color-primary);
+  border-radius: 50%;
+  animation: cl-spin 0.8s linear infinite;
+}
+
+@keyframes cl-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ---- cell types (see UiTableCell.vue) ----
+.cl-table {
+  &__img {
+    width: 84px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: f.color('page');
+  }
+
+  &__dash { color: f.color('muted'); }
+
+  // keep old rows visible but faded while the next page loads
+  &__wrap.is-loading { opacity: 0.55; transition: opacity 0.15s; }
+}
+
+// ---- filter bar (UiTableFilters.vue) ----
+.cl-table-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: f.space(3);
+  margin-bottom: f.space(4);
+  padding: f.space(3);
+  border: 1px dashed f.color('border');
+  border-radius: 6px;
+  background: f.color('stripe');
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: f.color('ink');
+  }
+
+  &__input { min-width: 180px; }
+}
+
+// ---- BADGE ----
+//   <span class="cl-badge cl-badge--success">Active</span>
+.cl-badge {
+  display: inline-block;
+  margin: 2px 4px 2px 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.06);
+  color: f.color('dark');
+
+  &--primary { background: rgba(var(--color-primary-rgb), 0.1); color: f.color('primary-dark'); }
+  &--success { background: rgba(40, 167, 69, 0.12); color: #1e7b34; }
+  &--danger  { background: rgba(220, 53, 69, 0.12); color: #a71d2a; }
+  &--warning { background: rgba(255, 195, 77, 0.25); color: #8a5a00; }
+  &--info    { background: rgba(29, 16, 48, 0.08); color: f.color('ink'); }
+  &--muted   { background: rgba(0, 0, 0, 0.06); color: f.color('muted'); }
+}
+
+// action buttons never wrap onto two lines
+.cl-table__table td.is-actions { white-space: nowrap; }
+
+// ---- phones: each row becomes a card with "Label  value" lines ----
+@include m.respond-to('sm') {
+  .cl-table__wrap { border: 0; overflow: visible; }
+
+  .cl-table__table {
+    thead { display: none; }
+
+    tbody tr {
+      display: block;
+      margin-bottom: f.space(3);
+      border: 1px solid f.color('border');
+      border-radius: 8px;
+      overflow: hidden;
+      background: f.color('surface') !important;
+    }
+
+    td {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: f.space(3);
+      height: auto;
+      min-height: 44px;
+      padding: 8px 12px;
+      border: 0;
+      border-top: 1px solid f.color('border');
+      text-align: right !important;
+
+      &:first-child { border-top: 0; }
+      &:last-child { border-right: 0; }
+
+      // the column name on the left
+      &::before {
+        content: attr(data-label);
+        flex-shrink: 0;
+        font-weight: 600;
+        color: f.color('ink');
+        text-align: left;
+      }
+
+      // "No data found" / spinner row has no label
+      &.cl-table__empty { justify-content: center; &::before { content: none; } }
+    }
+  }
+}
+
+// keeps badges / action buttons together as one unit inside a cell
+.cl-table__group { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: inherit; }

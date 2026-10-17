@@ -1,0 +1,99 @@
+// SELECT  -  themed dropdown.  Vue: <ui-select v-model :options>
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+.cl-select {
+  position: relative;
+  display: inline-block;
+  min-width: 180px;
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: f.space(2);
+    width: 100%;
+    height: 30px;
+    padding: 0 10px;
+    border: 1px solid f.color('border');
+    border-radius: 6px;
+    background: f.color('surface');
+    color: f.color('dark');
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s;
+
+    &:hover { border-color: rgba(var(--color-primary-rgb), 0.4); }
+    &:focus { @include m.focus-ring(0.25); border-color: var(--color-primary); }
+  }
+
+  &__value {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    &.is-placeholder { color: f.color('muted'); }
+  }
+
+  &__arrow {
+    font-size: 10px;
+    color: f.color('muted');
+    transition: transform 0.2s;
+  }
+
+  &.is-open &__arrow { transform: rotate(180deg); color: var(--color-primary); }
+  &.is-open &__toggle { border-color: var(--color-primary); }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 1050;
+    min-width: 100%;
+    max-height: 240px;
+    margin: 0;
+    padding: 4px;
+    overflow-y: auto;
+    list-style: none;
+    background: f.color('surface');
+    border: 1px solid f.color('border');
+    border-radius: 8px;
+    box-shadow: 0 10px 24px rgba(29, 16, 48, 0.12);
+    animation: cl-select-in 0.12s ease-out;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: f.space(3);
+    padding: 7px 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    color: f.color('dark');
+    white-space: nowrap;
+    cursor: pointer;
+
+    // hover / keyboard: soft brand tint
+    &.is-active { background: rgba(var(--color-primary-rgb), 0.08); color: f.color('primary-dark'); }
+
+    // chosen value: solid brand colour
+    &.is-selected { background: var(--gradient-active); color: #fff; font-weight: 600; }
+  }
+
+  &__check { font-size: 10px; }
+
+  // compact version (e.g. "Show 10 entries")
+  &--sm { min-width: 72px; }
+}
+
+@keyframes cl-select-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+// full width inside forms, error state
+.cl-field .cl-select { display: block; width: 100%; }
+.cl-field .cl-select__toggle { height: 48px; padding: 0 16px; border: 0; border-radius: f.radius('sm'); background: f.color('field'); font-size: 15px; }
+.cl-select.is-invalid .cl-select__toggle { box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.4); }

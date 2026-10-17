@@ -221,22 +221,6 @@ p {
 </style>
 
 <template>
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="/admin/dashboard">Home</a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="/admin/appointments">RoomTypes</a>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="content">
         <div class="container-fluid">
@@ -401,8 +385,8 @@ p {
 
                 <div class="row">
                     <div class="col-md-12  text-right">
-                        <button type="button" class="btn btn-primary" @click="resetForm()">Cancel</button>
-                        <button type="button" @click="submitForm" class="btn btn-warning ml-2">Save</button>
+                        <button type="button" class="cl-btn cl-btn--light" @click="resetForm()">Cancel</button>
+                        <button type="button" @click="submitForm" class="cl-btn cl-btn--primary ml-2">Save</button>
                     </div>
                 </div>
             </form>

@@ -1,0 +1,17 @@
+// Small helpers so components never contain raw values.
+@use 'tokens' as t;
+
+// color('primary')  ->  var(--color-primary)
+@function color($name) {
+  @return var(--color-#{$name});
+}
+
+// radius('sm')  ->  var(--radius-sm)
+@function radius($name) {
+  @return var(--radius-#{$name});
+}
+
+// space(3)  ->  12px
+@function space($step) {
+  @return $step * t.$space-unit;
+}

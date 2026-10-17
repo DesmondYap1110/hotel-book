@@ -1,8 +1,38 @@
-// Fonts
-@import url('https://fonts.bunny.net/css?family=Nunito');
+// =============================================================
+// APP STYLES  -  this file is only a table of contents.
+// Order matters: tokens first, specific things last.
+// Read resources/sass/README.md for "where do I put X?".
+// =============================================================
 
-// Variables
-@import 'variables';
+// 1. Abstracts (tokens). Prints only the :root CSS variables.
+@use 'abstracts/tokens';
 
-// Bootstrap
-@import 'bootstrap/scss/bootstrap';
+// 2. Base
+@use 'base/typography';
+
+// 3. Components (reusable, no page-specific names)
+@use 'components/button';
+@use 'components/form';
+@use 'components/card';
+@use 'components/icon-button';
+@use 'components/page-card';
+@use 'components/data-table';
+@use 'components/pagination';
+@use 'components/breadcrumb';
+@use 'components/alert';
+@use 'components/page-loader';
+@use 'components/select';
+
+// 4. Layouts (page skeletons)
+@use 'layouts/auth';
+@use 'layouts/admin';
+
+// 5. Utilities (last, so they win)
+@use 'utilities/spacing';
+@use 'utilities/text';
+
+// 6. Third-party: fonts, AdminLTE, Font Awesome
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback');
+@import 'admin-lte/plugins/fontawesome-free/css/all.min.css';
+@import 'admin-lte/dist/css/adminlte.min.css';

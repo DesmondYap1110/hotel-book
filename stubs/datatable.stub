@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Datatables\Lists;
+
+use App\Datatables\Core\Column;
+use App\Datatables\Core\Datatable;
+use App\Datatables\Filters;
+use App\Models\{{ model }};
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+
+class {{ class }} extends Datatable
+{
+    /** What the table shows. Keys must match the keys returned by row(). */
+    public function columns(): array
+    {
+        return [
+            Column::make('name', 'Name')->sortable()->searchable(),
+            Column::make('created_at', 'Created')->sortable()->width('160px'),
+            Column::make('action', 'Action')->actions(),
+        ];
+    }
+
+    /** Optional dropdown / text / date filters above the table. */
+    public function filters(): array
+    {
+        return [
+            // Filters\SelectFilter::make('status', 'Status', ['active' => 'Active', 'inactive' => 'Inactive']),
+        ];
+    }
+
+    public function defaultSort(): ?array
+    {
+        return ['created_at', 'desc'];
+    }
+
+    /** The base query. Add ->with('relation') here to avoid N+1 queries. */
+    public function query(Request $request): Builder
+    {
+        return {{ model }}::query();
+    }
+
+    /** @param {{ model }} ${{ variable }} */
+    public function row(Model ${{ variable }}): array
+    {
+        return [
+            'name'       => ${{ variable }}->name,
+            'created_at' => ${{ variable }}->created_at?->format('d M Y'),
+            'action'     => $this->actions()
+                // ->edit(route('admin.xxx.edit', ${{ variable }}))
+                // ->delete(route('admin.xxx.destroy', ${{ variable }}), ${{ variable }}->name)
+            ,
+        ];
+    }
+}

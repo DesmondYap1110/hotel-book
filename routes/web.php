@@ -1,10 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\RoomController;
-use App\Http\Controllers\Admin\RoomTypeController;
-use App\Http\Controllers\Admin\RoomFacilityController;
-use App\Http\Controllers\Admin\HotelController;
+use App\Http\Controllers\Admin\Room\RoomController;
+use App\Http\Controllers\Admin\Room\RoomTypeController;
+use App\Http\Controllers\Admin\Room\RoomFacilityController;
+use App\Http\Controllers\Admin\Hotel\HotelController;
+use App\Http\Controllers\Admin\Core\DatatableController;
+use App\Http\Controllers\Admin\Account\PasswordController;
+use App\Http\Controllers\Auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,9 +20,7 @@ use App\Http\Controllers\Admin\HotelController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/admin');
 
 // Route::get('/admin/dashboard', function () {
 //     return view('admin.rooms_list');
@@ -28,7 +29,19 @@ Route::get('/', function () {
 // Route::get('/admin/rooms', [RoomController::class, 'index']);
 
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::redirect('/admin', '/admin/rooms');
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth'], function () {
+    // one JSON endpoint for every table (lists registered in config/datatables.php)
+    Route::get('datatables/{list}', [DatatableController::class, 'show'])->name('datatables.show');
+
+    Route::get('password', [PasswordController::class, 'edit'])->name('password.edit');
+    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
+
     Route::resource('hotels', HotelController::class)->only(['index','create','edit', 'update','destroy']);
 
     Route::resource('rooms', RoomController::class)->only(['index','create','store','edit', 'update','destroy']);

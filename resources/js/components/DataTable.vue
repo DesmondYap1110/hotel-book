@@ -1,5 +1,4 @@
 <style lang="scss" scoped>
-@import "../../sass/_variables.scss";
 
 .datatable__clickable{
 	cursor: pointer;

@@ -1,0 +1,88 @@
+// BUTTON
+//   <button class="cl-btn cl-btn--primary cl-btn--block cl-btn--lg">Save</button>
+// Variants come from $btn-variants in abstracts/_tokens.scss.
+//
+// Animation (all buttons): lift + glow + shine sweep on hover, press on click.
+// A "+" icon (fa-plus) also turns a quarter on hover.
+@use '../abstracts/tokens' as t;
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+.cl-btn {
+  position: relative;
+  overflow: hidden;            // keeps the shine inside the button
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 f.space(4);
+  border: 0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+
+  // shine: a light stripe that slides across on hover
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transform: skewX(-20deg);
+    pointer-events: none;
+  }
+
+  i { transition: transform 0.3s ease; }
+
+  &:hover {
+    text-decoration: none;
+    transform: translateY(-2px);
+
+    &::after { left: 125%; transition: left 0.6s ease; }
+    .fa-plus { transform: rotate(90deg); }
+  }
+
+  &:active { transform: translateY(0) scale(0.97); }
+  &:focus-visible { @include m.focus-ring; }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  // sizes
+  &--lg { height: 50px; font-size: 16px; border-radius: f.radius('sm'); }
+  &--sm { height: 28px; font-size: 12px; padding: 0 f.space(3); }
+  // full width
+  &--block { width: 100%; }
+
+  // users who turned on "reduce motion" get no movement
+  @media (prefers-reduced-motion: reduce) {
+    transition: background-color 0.2s ease;
+    &::after { display: none; }
+    &:hover, &:active { transform: none; }
+    &:hover .fa-plus { transform: none; }
+  }
+}
+
+// One modifier per variant: .cl-btn--primary, .cl-btn--dark, ...
+@each $name, $parts in t.$btn-variants {
+  .cl-btn--#{$name} {
+    background: f.color(nth($parts, 1));
+    color: f.color(nth($parts, 3));
+
+    &:hover {
+      background: f.color(nth($parts, 2));
+      color: f.color(nth($parts, 3));
+    }
+  }
+}

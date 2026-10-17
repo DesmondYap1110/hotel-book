@@ -1,0 +1,5 @@
+// Fonts are applied only where we ask, so AdminLTE pages keep their own font.
+.cl-font,
+.cl-auth {
+  font-family: var(--font-body);
+}

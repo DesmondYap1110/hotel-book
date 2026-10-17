@@ -1,0 +1,38 @@
+// PAGINATION  -  Vue: <ui-pagination v-model:page="page" :total-pages="5">
+//   Previous | 1 | 2 | 3 | Next
+@use '../abstracts/functions' as f;
+
+.cl-pagination {
+  display: inline-flex;
+  border: 1px solid f.color('border');
+  border-radius: 4px;
+  overflow: hidden;
+
+  &__btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 f.space(3);
+    border: 0;
+    border-right: 1px solid f.color('border');
+    background: f.color('surface');
+    color: f.color('dark');
+    font-size: 13px;
+    cursor: pointer;
+
+    &:last-child { border-right: 0; }
+    &:hover:not(:disabled) { background: f.color('page'); color: f.color('primary'); }
+    &:disabled { cursor: default; color: f.color('muted'); }
+
+    &.is-active {
+      background: f.color('ink');
+      color: #fff;
+    }
+  }
+
+  &__gap {
+    padding: 0 f.space(2);
+    line-height: 32px;
+    border-right: 1px solid f.color('border');
+    color: f.color('muted');
+  }
+}

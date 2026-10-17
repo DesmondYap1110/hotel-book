@@ -1,0 +1,53 @@
+// BREADCRUMB BAR  -  (home) > Rooms > Room Types
+// Markup: resources/views/admin/partials/breadcrumb.blade.php
+@use '../abstracts/functions' as f;
+@use '../abstracts/mixins' as m;
+
+.cl-breadcrumb {
+  display: flex;
+  align-items: center;
+  height: var(--breadcrumb-height);
+  padding: 0 var(--content-gutter);
+  background: linear-gradient(180deg, #ecebf3 0%, #f7f6fa 100%);
+  box-shadow: 0 6px 14px -8px rgba(29, 16, 48, 0.18);
+
+  &__list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 12px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    color: f.color('ink');
+
+    // ">" between items
+    & + &::before {
+      content: '\203A';
+      margin: 0 f.space(2);
+      font-size: 13px;
+      color: f.color('muted');
+    }
+
+    &.is-current { color: f.color('crimson'); font-weight: 500; }
+  }
+
+  // home icon
+  &__link i { font-size: 12px; }
+
+  &__link {
+    color: f.color('ink');
+    text-decoration: none;
+
+    &:hover { color: f.color('primary'); text-decoration: none; }
+  }
+
+  @include m.respond-to('lg') {
+    padding: 0 f.space(4);
+  }
+}

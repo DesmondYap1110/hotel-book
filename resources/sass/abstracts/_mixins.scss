@@ -1,0 +1,23 @@
+// Reusable snippets. Use with:  @include m.flex-center;
+@use 'sass:map';
+@use 'tokens' as t;
+
+// Center children horizontally and vertically
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Media query by name.  @include m.respond-to('md') { ... }  ->  screens <= md
+@mixin respond-to($name) {
+  @media (max-width: map.get(t.$breakpoints, $name)) {
+    @content;
+  }
+}
+
+// Keyboard focus glow in the brand color
+@mixin focus-ring($alpha: 0.35) {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), $alpha);
+}
